@@ -1,0 +1,95 @@
+{% extends "base.njk" %}
+
+{% block title %}Organization Settings — Parlats{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+  <h1 class="text-2xl font-bold mb-1">{{ t("nav.settings") }}</h1>
+  <p class="text-text-muted text-sm">Manage your organization's profile.</p>
+</div>
+
+{% if error %}
+<div class="mb-4 px-4 py-3 rounded bg-danger/10 border border-danger/20 text-danger text-sm">
+  {{ error }}
+</div>
+{% endif %}
+
+{% if success %}
+<div class="mb-4 px-4 py-3 rounded bg-success/10 border border-success/20 text-success text-sm">
+  {{ success }}
+</div>
+{% endif %}
+
+<form method="post" action="/org/settings" class="max-w-lg space-y-6">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+  <div class="bg-surface-card border border-border rounded-lg p-6 space-y-5">
+    <h2 class="text-lg font-semibold">General</h2>
+
+    <div>
+      <label class="block text-sm font-medium text-text-secondary mb-1" for="name">
+        Organization name
+      </label>
+      <input type="text" id="name" name="name" value="{{ org.name }}" required maxlength="255"
+             class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none">
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-text-secondary mb-1" for="slug">
+        Slug
+      </label>
+      <input type="text" id="slug" name="slug" value="{{ org.slug }}" required maxlength="100"
+             pattern="[a-z0-9][a-z0-9\-]*[a-z0-9]"
+             class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none">
+      <p class="text-xs text-text-muted mt-1">Lowercase letters, numbers, and hyphens. Used in URLs.</p>
+    </div>
+
+    {# Logo URL — hidden until we display it somewhere in the UI
+    <div>
+      <label class="block text-sm font-medium text-text-secondary mb-1" for="logo_url">
+        Logo URL
+      </label>
+      <input type="url" id="logo_url" name="logo_url" value="{{ org.logo_url or '' }}" placeholder="https://example.com/logo.png"
+             class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none">
+      <p class="text-xs text-text-muted mt-1">Optional. Direct link to your organization's logo image.</p>
+    </div>
+    #}
+  </div>
+
+  <div class="flex items-center gap-3">
+    <button type="submit"
+            class="px-4 py-2 rounded bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-colors">
+      Save changes
+    </button>
+  </div>
+</form>
+
+{% if ctx and ctx.org and (ctx.org.role == 'owner' or ctx.org.role == 'admin') %}
+<div class="max-w-lg mt-8">
+  <div class="bg-surface-card border border-border rounded-lg p-6">
+    <h2 class="text-lg font-semibold mb-2">Billing & Subscription</h2>
+    <p class="text-text-secondary text-sm mb-4">Manage your subscription, payment method, and invoices.</p>
+    <a href="/billing"
+       class="inline-flex items-center gap-1 px-4 py-2 rounded bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-colors no-underline">
+      Manage Billing &rarr;
+    </a>
+  </div>
+</div>
+{% endif %}
+
+{# Danger zone #}
+<div class="max-w-lg mt-8">
+  <div class="bg-danger/5 border border-danger/20 rounded-lg p-6">
+    <h2 class="text-lg font-semibold text-danger mb-2">Danger zone</h2>
+    <p class="text-text-secondary text-sm mb-4">Permanently delete your account and all associated data. This action cannot be undone.</p>
+    <a href="/user/delete-account"
+       class="inline-flex items-center gap-1 px-4 py-2 rounded bg-danger text-white text-sm font-medium hover:bg-red-600 transition-colors no-underline">
+      Delete account &rarr;
+    </a>
+  </div>
+</div>
+
+{# Version #}
+<div class="max-w-lg mt-8 text-center">
+  <p class="text-text-muted text-xs">Parlats v{{ appVersion }}</p>
+</div>
+{% endblock %}

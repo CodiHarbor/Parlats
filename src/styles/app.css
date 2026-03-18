@@ -1,0 +1,89 @@
+@import "tailwindcss";
+@source "../../src/templates/**/*.njk";
+
+@theme {
+  --color-surface: #0d0d12;
+  --color-surface-card: #1a1a24;
+  --color-surface-hover: #22222e;
+  --color-border: #2a2a3a;
+  --color-border-strong: #3a3a4a;
+  --color-text-primary: #e4e4e7;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+  --color-primary: #6366f1;
+  --color-primary-hover: #818cf8;
+  --color-primary-muted: #6366f133;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+}
+
+/* Base resets for dark theme */
+body {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+/* Dialog backdrop */
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Custom select — consistent chevron with proper padding */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2371717a' stroke-width='1.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+  padding-right: 2rem;
+}
+
+/* Thin scrollbar — cross-platform consistent, applied globally */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+*::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 3px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* HTMX loading indicator */
+.htmx-indicator {
+  display: none;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  display: inline-block;
+}
+
+/* Mobile modals — near full-screen */
+@media (max-width: 1023px) {
+  dialog[open] {
+    max-width: 100vw;
+    max-height: 100dvh;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  /* Pagination tap targets — minimum 44px */
+  nav a, nav span {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

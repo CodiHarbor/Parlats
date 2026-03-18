@@ -1,0 +1,13 @@
+{# HTMX partial: translation cell display state #}
+<span class="block min-h-[1.5em]">
+  {% if value %}{{ value | highlight_tokens(project.interpolation_format or "auto") }}{% else %}<span class="inline-block px-1.5 py-0.5 text-xs bg-danger/15 text-danger rounded">{{ t("common.missing") }}</span>{% endif %}
+</span>
+{% if warnings and warnings.length > 0 %}
+<div class="mt-1 text-xs text-warning" onclick="event.stopPropagation()">
+  {% for w in warnings %}
+  <span class="inline-block px-1.5 py-0.5 bg-warning/10 text-warning rounded mr-1 mb-0.5">
+    {% if w.type == "missing_token" %}{{ t("editor.missing_token", { token: w.token }) }}{% elif w.type == "extra_token" %}{{ t("editor.extra_token", { token: w.token }) }}{% endif %}
+  </span>
+  {% endfor %}
+</div>
+{% endif %}

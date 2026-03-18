@@ -1,0 +1,93 @@
+{% extends "base.njk" %}
+{% from "macros/ui.njk" import breadcrumbs %}
+{% from "macros/icons.njk" import icon %}
+
+{% block title %}Operation Detail — {{ project.name }} — Parlats{% endblock %}
+
+{% block content %}
+{{ breadcrumbs([
+  { label: t("nav.projects"), url: "/projects" },
+  { label: project.name, url: "/projects/" + project.id },
+  { label: t("history.title"), url: "/projects/" + project.id + "/history" },
+  { label: t("history.detail_title") }
+]) }}
+
+<div class="bg-surface-card border border-border rounded-lg p-5 mb-6">
+  <div class="flex items-start gap-4">
+    {% if operation.type == "edit" %}
+    <div class="w-10 h-10 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center text-primary">{{ icon("pencil", "w-5 h-5") }}</div>
+    {% elif operation.type == "import_json" or operation.type == "import_csv" or operation.type == "import_yaml" %}
+    <div class="w-10 h-10 shrink-0 rounded-lg bg-success/10 flex items-center justify-center text-success">{{ icon("upload", "w-5 h-5") }}</div>
+    {% elif operation.type == "ai_translate" %}
+    <div class="w-10 h-10 shrink-0 rounded-lg bg-danger/10 flex items-center justify-center text-danger">{{ icon("sparkles", "w-5 h-5") }}</div>
+    {% elif operation.type == "batch_add" %}
+    <div class="w-10 h-10 shrink-0 rounded-lg bg-warning/10 flex items-center justify-center text-warning">{{ icon("plus", "w-5 h-5") }}</div>
+    {% elif operation.type == "batch_delete" %}
+    <div class="w-10 h-10 shrink-0 rounded-lg bg-danger/10 flex items-center justify-center text-danger">{{ icon("minus", "w-5 h-5") }}</div>
+    {% else %}
+    <div class="w-10 h-10 shrink-0 rounded-lg bg-surface-hover flex items-center justify-center text-text-muted">{{ icon("circle", "w-5 h-5") }}</div>
+    {% endif %}
+
+    <div class="flex-1">
+      <h1 class="text-xl font-bold mb-1">
+        {{ operation.user_name or operation.user_email }}
+        <span class="font-normal text-text-secondary">{{ operation.summary }}</span>
+      </h1>
+      <div class="flex items-center gap-3 text-sm text-text-muted">
+        <span>{{ operation.created_at | timeago }}</span>
+        <span class="text-text-muted">&middot;</span>
+        <span>{{ operation.created_at | date }}</span>
+        {% if metadata.language %}
+        <span class="inline-block px-2 py-0.5 bg-primary/10 text-primary text-xs rounded">{{ metadata.language }}</span>
+        {% endif %}
+        {% if metadata.format %}
+        <span class="inline-block px-2 py-0.5 bg-surface-hover text-text-secondary text-xs rounded">{{ metadata.format }}</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="text-lg font-semibold mb-4">{{ t("history.changes_heading") }} <span class="text-text-muted font-normal">({{ details.length }})</span></h2>
+
+{% if details.length > 0 %}
+<div class="space-y-3">
+  {% for d in details %}
+  <div class="bg-surface-card border border-border rounded-lg p-4">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="font-medium text-sm text-text-primary font-mono">{{ d.key_name }}</span>
+      {% if d.language_code %}
+      <code class="text-xs bg-surface px-1.5 py-0.5 rounded text-text-secondary">{{ d.language_code }}</code>
+      {% endif %}
+      {% if d.action == "created" %}
+      <span class="inline-block px-2 py-0.5 bg-success/15 text-success text-xs rounded font-medium">{{ t("common.created") }}</span>
+      {% elif d.action == "updated" %}
+      <span class="inline-block px-2 py-0.5 bg-primary/15 text-primary text-xs rounded font-medium">{{ t("common.updated") }}</span>
+      {% elif d.action == "deleted" %}
+      <span class="inline-block px-2 py-0.5 bg-danger/15 text-danger text-xs rounded font-medium">{{ t("common.deleted") }}</span>
+      {% endif %}
+    </div>
+
+    {% if d.old_value is not none or d.new_value is not none %}
+    <div class="bg-surface rounded p-3 text-sm font-mono space-y-1 overflow-x-auto">
+      {% if d.old_value is not none %}
+      <div class="flex gap-2">
+        <span class="text-danger shrink-0">&minus;</span>
+        <span class="text-text-muted {% if d.action == 'deleted' %}line-through{% endif %}">{{ d.old_value }}</span>
+      </div>
+      {% endif %}
+      {% if d.new_value is not none %}
+      <div class="flex gap-2">
+        <span class="text-success shrink-0">+</span>
+        <span class="text-text-primary">{{ d.new_value }}</span>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-text-muted text-sm">{{ t("history.no_details") }}</p>
+{% endif %}
+{% endblock %}

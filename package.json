@@ -1,0 +1,40 @@
+{
+  "name": "parlats",
+  "version": "1.0.0",
+  "description": "Open-core translation management platform",
+  "module": "src/index.ts",
+  "type": "module",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "dev": "bun scripts/dev.ts",
+    "dev:app": "bun --hot src/index.ts",
+    "start": "bun src/index.ts",
+    "migrate": "bun src/db/migrate.ts",
+    "test": "bun test src/",
+    "db:up": "podman compose up -d db",
+    "db:down": "podman compose down",
+    "dev:css": "bunx @tailwindcss/cli -i src/styles/app.css -o public/tailwind.css --watch",
+    "build:css": "bunx @tailwindcss/cli -i src/styles/app.css -o public/tailwind.css --minify"
+  },
+  "dependencies": {
+    "arctic": "^3.7.0",
+    "exceljs": "^4.4.0",
+    "js-yaml": "^4.1.1",
+    "nunjucks": "^3.2.4",
+    "papaparse": "^5.5.3",
+    "posthog-node": "^5.28.2",
+    "resend": "^6.9.3",
+    "stripe": "^20.4.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.1",
+    "@types/bun": "latest",
+    "@types/js-yaml": "^4.0.9",
+    "@types/nunjucks": "^3.2.6",
+    "@types/papaparse": "^5.5.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,37 @@
+{% from "macros/icons.njk" import icon %}
+{# partials/notification-dropdown.njk — fetched when bell is clicked #}
+<div class="py-2">
+  {% if notifications.length > 0 %}
+  <div class="flex items-center justify-between px-4 py-2 border-b border-border">
+    <span class="text-xs font-semibold text-text-muted uppercase">{{ t("notifications.heading") }}</span>
+    {% if count > 0 %}
+    <button class="text-xs text-primary hover:text-primary-hover cursor-pointer bg-transparent border-0"
+            hx-post="/notifications/read-all"
+            hx-target="#notification-bell"
+            hx-swap="innerHTML">
+      {{ t("notifications.mark_all_read_short") }}
+    </button>
+    {% endif %}
+  </div>
+  {% for n in notifications %}
+  <a href="{% if n.project_id %}/projects/{{ n.project_id }}{% if n.translation_key_id %}/editor{% endif %}{% else %}/notifications{% endif %}"
+     class="flex items-start gap-3 px-4 py-3 hover:bg-surface-hover no-underline {{ 'bg-primary/5' if not n.read_at }}"
+     hx-post="/notifications/{{ n.id }}/read"
+     hx-swap="none">
+    <span class="w-5 text-center shrink-0 mt-0.5">
+      {% if n.type == 'comment_added' %}{{ icon("chat", "w-4 h-4") }}{% elif n.type == 'translation_overwritten' %}{{ icon("pencil", "w-4 h-4") }}{% else %}{{ icon("warning", "w-4 h-4") }}{% endif %}
+    </span>
+    <div class="min-w-0 flex-1">
+      <div class="text-sm {{ 'font-semibold text-text-primary' if not n.read_at else 'text-text-secondary' }} truncate">{{ n.title }}</div>
+      <div class="text-xs text-text-muted truncate">{{ n.body }}</div>
+      <div class="text-xs text-text-muted mt-0.5">{{ n.created_at | timeago }}</div>
+    </div>
+  </a>
+  {% endfor %}
+  <div class="border-t border-border px-4 py-2 text-center">
+    <a href="/notifications" class="text-xs text-primary hover:text-primary-hover no-underline">{{ t("notifications.view_all") }}</a>
+  </div>
+  {% else %}
+  <div class="px-4 py-6 text-center text-sm text-text-muted">{{ t("notifications.no_notifications") }}</div>
+  {% endif %}
+</div>

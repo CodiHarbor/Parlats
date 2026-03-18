@@ -1,0 +1,113 @@
+{% extends "base.njk" %}
+
+{% from "macros/ui.njk" import empty_state %}
+
+{% block title %}Dashboard — Parlats{% endblock %}
+
+{% block header %}
+<input type="search" placeholder="{{ t("dashboard.search_placeholder") }}"
+       class="bg-surface border border-border rounded px-3 py-1.5 text-sm text-text-primary placeholder-text-muted w-full sm:w-64 focus:outline-none focus:border-primary">
+<a href="/projects/new"
+   class="px-4 py-1.5 bg-primary hover:bg-primary-hover text-white rounded font-medium text-sm no-underline whitespace-nowrap">
+  {{ t("dashboard.new_project") }}
+</a>
+{% endblock %}
+
+{% block content %}
+{% if subscriptionDegraded %}
+<div class="mb-6 bg-warning/10 border border-warning/30 rounded-lg p-4">
+  <p class="text-sm text-warning">
+    Your subscription needs attention — some features are limited.
+    <a href="/billing" class="underline font-medium hover:text-warning/80">Update billing &rarr;</a>
+  </p>
+</div>
+{% endif %}
+
+<div class="mb-6">
+  <h1 class="text-2xl font-bold mb-1">{{ t("dashboard.title") }}</h1>
+  <p class="text-text-muted text-sm">{{ t("dashboard.subtitle") }}</p>
+</div>
+
+{% if projects.length > 0 %}
+{# Stat cards #}
+{% set totalKeys = 0 %}
+{% set totalTranslated = 0 %}
+{% set totalCells = 0 %}
+{% for p in projects %}
+  {% set totalKeys = totalKeys + (p.key_count | int) %}
+  {% set totalTranslated = totalTranslated + (p.translated_count | int) %}
+  {% set totalCells = totalCells + (p.total_cells | int) %}
+{% endfor %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="bg-surface-card border border-border rounded-lg p-4">
+    <div class="text-3xl font-bold text-primary mb-1">{{ projects.length }}</div>
+    <div class="text-xs text-text-muted uppercase tracking-wide">{{ t("dashboard.stat_projects") }}</div>
+  </div>
+  <div class="bg-surface-card border border-border rounded-lg p-4">
+    <div class="text-3xl font-bold text-primary mb-1">{{ totalKeys }}</div>
+    <div class="text-xs text-text-muted uppercase tracking-wide">{{ t("dashboard.stat_total_keys") }}</div>
+  </div>
+  <div class="bg-surface-card border border-border rounded-lg p-4">
+    <div class="text-3xl font-bold text-success mb-1">
+      {% if totalCells > 0 %}{{ ((totalTranslated / totalCells) * 100) | round }}%{% else %}—{% endif %}
+    </div>
+    <div class="text-xs text-text-muted uppercase tracking-wide">{{ t("dashboard.stat_overall_coverage") }}</div>
+  </div>
+  <div class="bg-surface-card border border-border rounded-lg p-4">
+    <div class="text-3xl font-bold text-primary mb-1">{{ memberCount or "—" }}</div>
+    <div class="text-xs text-text-muted uppercase tracking-wide">{{ t("dashboard.stat_team_members") }}</div>
+  </div>
+</div>
+
+{# Projects section #}
+<div class="flex items-center justify-between mb-4">
+  <h2 class="text-lg font-semibold">{{ t("dashboard.projects_heading") }}</h2>
+  <a href="/projects" class="text-sm text-primary hover:text-primary-hover no-underline">{{ t("common.view_all") }}</a>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  {% for project in projects %}
+  <a href="/projects/{{ project.id }}" class="block no-underline">
+    <div class="bg-surface-card border border-border rounded-lg p-4 hover:border-border-strong transition-colors">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary shrink-0">
+          {% from "macros/icons.njk" import icon %}{{ icon("folder", "w-5 h-5") }}
+        </div>
+        <div class="min-w-0">
+          <div class="font-semibold text-text-primary truncate">{{ project.name }}</div>
+          <div class="text-xs text-text-muted">
+            {{ project.language_count }} language{{ "s" if project.language_count != 1 }}
+            &middot; {{ project.key_count }} keys
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-border pt-3 grid grid-cols-3 gap-2 text-center">
+        {% set pct = ((project.translated_count / project.total_cells) * 100) | round if project.total_cells > 0 else 0 %}
+        <div>
+          <div class="text-lg font-bold {% if pct >= 80 %}text-success{% elif pct >= 50 %}text-warning{% else %}text-danger{% endif %}">{{ pct }}%</div>
+          <div class="text-xs text-text-muted">{{ t("dashboard.translated") }}</div>
+        </div>
+        <div>
+          <div class="text-lg font-bold text-warning">{{ (project.total_cells - project.translated_count) if project.total_cells > 0 else 0 }}</div>
+          <div class="text-xs text-text-muted">{{ t("dashboard.missing") }}</div>
+        </div>
+        <div>
+          <div class="text-lg font-bold text-text-secondary">{{ project.key_count }}</div>
+          <div class="text-xs text-text-muted">{{ t("dashboard.keys") }}</div>
+        </div>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+{% else %}
+{{ empty_state(
+  t("dashboard.no_projects_title"),
+  t("dashboard.no_projects_message"),
+  "/projects/new",
+  t("dashboard.create_project")
+) }}
+{% endif %}
+{% endblock %}

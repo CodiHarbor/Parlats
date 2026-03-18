@@ -1,0 +1,24 @@
+{# Form field with label and optional error message #}
+{% macro field(name, label, type="text", value="", error="", required=false, placeholder="") %}
+<div class="mb-4">
+  <label for="{{ name }}" class="block text-sm font-medium text-text-secondary mb-1">{{ label }}</label>
+  <input type="{{ type }}" id="{{ name }}" name="{{ name }}"
+    value="{{ value }}"
+    {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+    {% if required %}required{% endif %}
+    {% if error %}aria-invalid="true" aria-describedby="{{ name }}-error"{% endif %}
+    class="w-full bg-surface border border-border rounded px-3 py-2 text-text-primary placeholder-text-muted
+           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
+           {% if error %}border-danger{% endif %}">
+  {% if error %}<p id="{{ name }}-error" class="text-danger text-xs mt-1" role="alert">{{ error }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{# Submit button with optional loading state #}
+{% macro submit(text="Save", loading=false) %}
+<button type="submit"
+  class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded font-medium text-sm"
+  {% if loading %}disabled{% endif %}>
+  {{ text }}
+</button>
+{% endmacro %}

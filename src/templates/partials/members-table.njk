@@ -1,0 +1,15 @@
+<table class="w-full text-sm">
+  <thead>
+    <tr class="border-b border-border bg-surface-card">
+      <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">{{ t("members.table_member") }}</th>
+      <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">{{ t("members.table_role") }}</th>
+      <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">{{ t("members.table_joined") }}</th>
+      <th scope="col" class="text-right px-4 py-3 font-medium text-text-secondary">{{ t("members.table_actions") }}</th>
+    </tr>
+  </thead>
+  <tbody id="members-tbody">
+    {% for member in members %}
+    {% include "partials/member-row.njk" %}
+    {% endfor %}
+  </tbody>
+</table>

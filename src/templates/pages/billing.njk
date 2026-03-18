@@ -1,0 +1,122 @@
+{% extends "base.njk" %}
+{% from "macros/icons.njk" import icon %}
+
+{% block title %}Billing — Parlats{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-text-primary mb-1">Billing</h1>
+    <p class="text-text-muted text-sm">Manage your subscription and payment details</p>
+  </div>
+
+  {% if subscription %}
+    {# Active subscription card #}
+    <div class="bg-surface-card border-2 border-primary rounded-xl overflow-hidden">
+      {# Header band #}
+      <div class="bg-primary/10 px-6 py-4 border-b border-primary/20">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary shrink-0">
+              {{ icon("credit-card", "w-5 h-5") }}
+            </div>
+            <div>
+              <p class="text-sm text-primary font-medium uppercase tracking-wide">Parlats Cloud</p>
+              <p class="text-2xl font-bold text-text-primary leading-tight">$49<span class="text-sm font-normal text-text-muted">/mo</span></p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide
+            {% if subscription.status == 'active' %}bg-success/15 text-success
+            {% elif subscription.status == 'past_due' %}bg-warning/15 text-warning
+            {% elif subscription.status == 'canceled' %}bg-danger/15 text-danger
+            {% else %}bg-text-muted/15 text-text-muted{% endif %}">
+            {{ subscription.status | replace("_", " ") | capitalize }}
+          </span>
+        </div>
+      </div>
+
+      {# Body #}
+      <div class="px-6 pt-6 pb-6">
+        {% if subscription.status == 'active' and subscription.current_period_end %}
+          <p class="text-sm text-text-muted mb-5">
+            {% if subscription.cancel_at %}
+              Cancels on {{ subscription.cancel_at | date }}
+            {% else %}
+              Next billing date: {{ subscription.current_period_end | date }}
+            {% endif %}
+          </p>
+        {% endif %}
+
+        {% if subscription.status == 'past_due' %}
+          <div class="bg-warning/10 border border-warning/30 rounded-lg p-4 mb-5">
+            <p class="text-sm text-warning">Your last payment failed. Please update your payment method to avoid losing access.</p>
+          </div>
+        {% endif %}
+
+        <p class="text-xs text-text-muted uppercase tracking-wide font-medium mb-3">Included in your plan</p>
+        <div class="grid grid-cols-2 gap-2 mb-6">
+          <p class="text-sm text-text-secondary">&#10003; Unlimited everything</p>
+          <p class="text-sm text-text-secondary">&#10003; Managed hosting</p>
+          <p class="text-sm text-text-secondary">&#10003; Automatic updates</p>
+          <p class="text-sm text-text-secondary">&#10003; Daily backups</p>
+          <p class="text-sm text-text-secondary">&#10003; Email support</p>
+          <p class="text-sm text-text-secondary">&#10003; 99.9% uptime SLA</p>
+        </div>
+
+        <div class="border-t border-border pt-5">
+          <form method="post" action="/billing/portal">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <button type="submit" class="bg-surface border border-border hover:bg-surface-hover hover:border-border-strong text-text-primary font-medium px-5 py-2.5 rounded-lg transition-colors cursor-pointer">
+              Manage Billing &rarr;
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  {% else %}
+    {# No subscription — upsell card #}
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      {% if verifyEmailRequired %}
+        <div class="bg-warning/10 border border-warning/30 rounded-lg p-4 mb-5">
+          <p class="text-sm text-warning">Please verify your email address before subscribing. Check your inbox for a verification link.</p>
+        </div>
+      {% endif %}
+
+      <div class="flex items-start gap-4 mb-5">
+        <div class="w-12 h-12 rounded-xl bg-text-muted/10 flex items-center justify-center text-text-muted shrink-0">
+          {{ icon("credit-card", "w-6 h-6") }}
+        </div>
+        <div>
+          <p class="text-lg font-semibold text-text-primary mb-1">No active subscription</p>
+          <p class="text-sm text-text-muted">Subscribe to Parlats Cloud for managed hosting, backups, and support.</p>
+        </div>
+      </div>
+
+      <div class="border-t border-border pt-5 mb-5">
+        <p class="text-xs text-text-muted uppercase tracking-wide font-medium mb-3">What you get with Cloud</p>
+        <div class="grid grid-cols-2 gap-2">
+          <p class="text-sm text-text-secondary">&#10003; Unlimited everything</p>
+          <p class="text-sm text-text-secondary">&#10003; Managed hosting</p>
+          <p class="text-sm text-text-secondary">&#10003; Automatic updates</p>
+          <p class="text-sm text-text-secondary">&#10003; Daily backups</p>
+          <p class="text-sm text-text-secondary">&#10003; Email support</p>
+          <p class="text-sm text-text-secondary">&#10003; 99.9% uptime SLA</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-border pt-5">
+        <div>
+          <p class="text-2xl font-bold text-text-primary">$49<span class="text-sm font-normal text-text-muted">/mo per organization</span></p>
+        </div>
+        <form method="post" action="/billing/checkout">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+          <button type="submit" class="bg-primary hover:bg-primary-hover text-white font-medium px-6 py-2.5 rounded-lg transition-colors cursor-pointer">
+            Subscribe &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

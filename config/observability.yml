@@ -1,0 +1,19 @@
+# config/observability.yml
+# Controls what gets captured and sent to PostHog.
+# PostHog is only active when POSTHOG_API_KEY env var is set.
+# Each toggle can be flipped independently — restart required after changes.
+
+posthog:
+  enabled: true
+  api_key: ""  # overridden by POSTHOG_API_KEY env var
+  host: "https://us.i.posthog.com"
+
+logging:
+  http_requests: true
+  http_errors: true
+  db_queries: false           # deferred — not implemented yet
+  auth_events: true
+  business_events: true
+  background_jobs: true
+  rate_limit_hits: true
+  slow_request_threshold_ms: 2000

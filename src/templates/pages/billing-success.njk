@@ -1,0 +1,20 @@
+{% extends "base.njk" %}
+
+{% block title %}Subscription Active — Parlats{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto mt-16 text-center">
+  <div class="mb-6">
+    <svg class="w-16 h-16 mx-auto text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  </div>
+  <h1 class="text-2xl font-bold text-slate-100 mb-2">You're subscribed!</h1>
+  <p class="text-slate-400 mb-8">
+    Your Parlats Cloud subscription is now active. Your team has full access to all features.
+  </p>
+  <a href="/projects" class="inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-medium px-6 py-2.5 rounded-lg transition-colors">
+    Go to Projects
+  </a>
+</div>
+{% endblock %}

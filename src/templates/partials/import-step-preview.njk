@@ -1,0 +1,96 @@
+{% if error %}
+<div class="p-4 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+  {{ error }}
+</div>
+{% elif rows.length == 0 %}
+<div class="p-4 text-text-muted text-sm text-center">
+  No changes to preview.
+</div>
+{% else %}
+
+<div class="text-xs text-text-muted mb-3 flex items-center justify-between">
+  <span>Showing {{ rows.length }} of {{ totalRows }} change{{ "s" if totalRows != 1 }} (page {{ page }} of {{ totalPages }})</span>
+</div>
+
+<div class="overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="border-b border-border text-left text-text-muted">
+        <th scope="col" class="px-3 py-2">Key</th>
+        {% if isBulk %}
+        <th scope="col" class="px-3 py-2">Namespace</th>
+        {% endif %}
+        <th scope="col" class="px-3 py-2">Language</th>
+        <th scope="col" class="px-3 py-2">Value</th>
+        <th scope="col" class="px-3 py-2 w-20">Status</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-border">
+      {% for row in rows %}
+      <tr>
+        <td class="px-3 py-2 font-mono text-xs text-text-primary break-all max-w-[200px]">{{ row.key }}</td>
+        {% if isBulk %}
+        <td class="px-3 py-2 text-xs text-text-muted">{{ row.namespace }}</td>
+        {% endif %}
+        <td class="px-3 py-2 text-xs">
+          <code class="bg-surface px-1.5 py-0.5 rounded text-text-secondary">{{ row.language }}</code>
+        </td>
+        <td class="px-3 py-2 text-text-primary text-xs max-w-[250px]">
+          {% if row.status == 'changed' and row.oldValue %}
+            <div class="text-red-400/70 line-through mb-0.5">{{ row.oldValue }}</div>
+          {% endif %}
+          <div>{{ row.newValue }}</div>
+        </td>
+        <td class="px-3 py-2">
+          {% if row.status == 'new' %}
+            <span class="text-xs font-medium text-green-400 bg-green-400/10 px-2 py-0.5 rounded">New</span>
+          {% elif row.status == 'changed' %}
+            <span class="text-xs font-medium text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">Changed</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{# Pagination #}
+{% if totalPages > 1 %}
+<div class="flex items-center justify-between pt-3 border-t border-border mt-3">
+  <div class="flex gap-2">
+    {% if page > 1 %}
+    <button type="button"
+      hx-get="/projects/{{ project.id }}/import/preview?token={{ token }}&page={{ page - 1 }}"
+      hx-target="#preview-content"
+      hx-swap="innerHTML"
+      class="px-3 py-1.5 bg-surface hover:bg-surface-hover border border-border text-text-primary rounded text-xs cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center">
+      Prev
+    </button>
+    {% else %}
+    <button type="button" disabled
+      class="px-3 py-1.5 bg-surface border border-border text-text-muted rounded text-xs cursor-not-allowed opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center">
+      Prev
+    </button>
+    {% endif %}
+
+    {% if page < totalPages %}
+    <button type="button"
+      hx-get="/projects/{{ project.id }}/import/preview?token={{ token }}&page={{ page + 1 }}"
+      hx-target="#preview-content"
+      hx-swap="innerHTML"
+      class="px-3 py-1.5 bg-surface hover:bg-surface-hover border border-border text-text-primary rounded text-xs cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center">
+      Next
+    </button>
+    {% else %}
+    <button type="button" disabled
+      class="px-3 py-1.5 bg-surface border border-border text-text-muted rounded text-xs cursor-not-allowed opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center">
+      Next
+    </button>
+    {% endif %}
+  </div>
+
+  <span class="text-xs text-text-muted">Page {{ page }} of {{ totalPages }}</span>
+</div>
+{% endif %}
+
+{% endif %}

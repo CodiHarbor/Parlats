@@ -1,0 +1,27 @@
+{% extends "base-public.njk" %}
+
+{% block body %}
+<nav class="sticky top-0 z-50 bg-surface/95 backdrop-blur border-b border-border">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+    <a href="/" class="flex items-center gap-2 text-lg font-bold text-text-primary no-underline">
+      <img src="/public/favicon.svg" alt="" style="width:1.25rem;height:1.25rem" class="w-5 h-5 rounded">
+      Parlats
+    </a>
+    <a href="/login" class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded text-sm font-medium no-underline">
+      Sign In
+    </a>
+  </div>
+</nav>
+
+<main class="max-w-md mx-auto px-4 sm:px-6 py-20 text-center">
+  {% if success %}
+  <h1 class="text-2xl font-bold text-text-primary mb-3">Unsubscribed</h1>
+  <p class="text-text-secondary mb-6">You will no longer receive notification digest emails from Parlats.</p>
+  <p class="text-text-muted text-sm">You can re-enable digest emails from your account settings at any time.</p>
+  {% elif error %}
+  <h1 class="text-2xl font-bold text-text-primary mb-3">Unsubscribe failed</h1>
+  <p class="text-text-secondary mb-6">{{ error }}</p>
+  <p class="text-text-muted text-sm">If you continue to receive unwanted emails, contact us at <a href="mailto:privacy@parlats.com" class="text-primary hover:underline">privacy@parlats.com</a>.</p>
+  {% endif %}
+</main>
+{% endblock %}

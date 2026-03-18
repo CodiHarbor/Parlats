@@ -1,0 +1,264 @@
+{% extends "base-public.njk" %}
+
+{% block body %}
+<nav class="sticky top-0 z-50 bg-surface/95 backdrop-blur border-b border-border">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+    <a href="/" class="flex items-center gap-2 text-lg font-bold text-text-primary no-underline">
+      <img src="/public/favicon.svg" alt="" style="width:1.25rem;height:1.25rem" class="w-5 h-5 rounded">
+      Parlats
+    </a>
+    <a href="/login" class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded text-sm font-medium no-underline">
+      Sign In
+    </a>
+  </div>
+</nav>
+
+<main class="max-w-2xl mx-auto px-4 sm:px-6 py-16">
+  <article class="space-y-4 text-text-secondary leading-relaxed">
+    <h1 class="text-3xl font-bold mb-2 text-text-primary">Privacy Policy</h1>
+    <p class="text-text-muted text-sm mb-10">Last updated: March 20, 2026</p>
+
+    <p>This Privacy Policy describes how CodiHarbor ("we," "us," or "our") collects, uses, and shares your personal data when you use Parlats ("the Service"), available at parlats.com.</p>
+    <p>CodiHarbor is a company registered in Croatia. For any privacy-related questions, contact us at <a href="mailto:privacy@parlats.com" class="text-primary hover:underline">privacy@parlats.com</a>.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">1. Data Controller</h2>
+    <p>CodiHarbor is the data controller for your personal data under the EU General Data Protection Regulation (GDPR).</p>
+    <p><strong>Supervisory authority:</strong> Agencija za zaštitu osobnih podataka (AZOP), Republic of Croatia.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">2. What Data We Collect</h2>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">2.1 Account Data</h3>
+    <p>When you create an account, we collect:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Email address</strong> — to identify your account and send transactional emails</li>
+      <li><strong>Name</strong> — to display in the app and to your team members</li>
+      <li><strong>Password</strong> (hashed) — if you register with email/password. We never store your password in plain text.</li>
+    </ul>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">2.2 OAuth Data</h3>
+    <p>If you sign in with Google, we receive your name, email address, and profile picture URL from Google. We do not receive or store your Google password.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">2.3 Usage Data</h3>
+    <p>When you use the Service, we collect:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Translation content</strong> — the translation keys and values you create, edit, and import</li>
+      <li><strong>Organization and project data</strong> — names, settings, and membership information you configure</li>
+      <li><strong>Change history</strong> — a log of who changed what and when, for audit trail purposes</li>
+      <li><strong>Comments</strong> — comments you leave on translation keys</li>
+    </ul>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">2.4 Technical Data</h3>
+    <p>We automatically collect:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>IP address</strong> — for security (rate limiting, abuse prevention)</li>
+      <li><strong>Request data</strong> — HTTP method, URL path, response status, and timing (for performance monitoring)</li>
+      <li><strong>Browser information</strong> — via standard HTTP headers</li>
+    </ul>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">2.5 Cookies</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border border-border rounded">
+        <thead>
+          <tr class="bg-surface-card">
+            <th scope="col" class="px-4 py-2 text-left font-medium border-b border-border">Cookie</th>
+            <th scope="col" class="px-4 py-2 text-left font-medium border-b border-border">Purpose</th>
+            <th scope="col" class="px-4 py-2 text-left font-medium border-b border-border">Type</th>
+            <th scope="col" class="px-4 py-2 text-left font-medium border-b border-border">Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2 font-mono text-xs">parlats_session</td>
+            <td class="px-4 py-2">Keeps you logged in</td>
+            <td class="px-4 py-2">Essential</td>
+            <td class="px-4 py-2">30 days</td>
+          </tr>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2 font-mono text-xs">oauth_state</td>
+            <td class="px-4 py-2">Prevents OAuth CSRF attacks</td>
+            <td class="px-4 py-2">Essential</td>
+            <td class="px-4 py-2">10 minutes</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2 font-mono text-xs">oauth_verifier</td>
+            <td class="px-4 py-2">OAuth PKCE verification</td>
+            <td class="px-4 py-2">Essential</td>
+            <td class="px-4 py-2">10 minutes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-3">We do <strong>not</strong> use advertising cookies or third-party tracking cookies.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">3. How We Use Your Data</h2>
+    <p>We use your personal data for:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Providing the Service</strong> — account management, authentication, team collaboration</li>
+      <li><strong>Transactional emails</strong> — email verification, password resets, team invitations, notification digests</li>
+      <li><strong>Security</strong> — rate limiting, login lockout, abuse detection</li>
+      <li><strong>Product improvement</strong> — anonymized usage analytics to understand how the Service is used</li>
+      <li><strong>Legal compliance</strong> — responding to legal requests, enforcing our Terms of Service</li>
+    </ul>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">Legal Basis (GDPR Art. 6)</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border border-border rounded">
+        <thead>
+          <tr class="bg-surface-card">
+            <th scope="col" class="px-4 py-2 text-left font-medium border-b border-border">Purpose</th>
+            <th scope="col" class="px-4 py-2 text-left font-medium border-b border-border">Legal Basis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2">Providing the Service</td>
+            <td class="px-4 py-2">Performance of contract (Art. 6(1)(b))</td>
+          </tr>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2">Transactional emails</td>
+            <td class="px-4 py-2">Performance of contract (Art. 6(1)(b))</td>
+          </tr>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2">Security and abuse prevention</td>
+            <td class="px-4 py-2">Legitimate interest (Art. 6(1)(f))</td>
+          </tr>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2">Product analytics</td>
+            <td class="px-4 py-2">Legitimate interest (Art. 6(1)(f))</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2">Legal compliance</td>
+            <td class="px-4 py-2">Legal obligation (Art. 6(1)(c))</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">4. Third-Party Services</h2>
+    <p>We share data with the following processors:</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">4.1 PostHog (Analytics)</h3>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Data shared:</strong> Hashed email, user ID, IP address, usage events</li>
+      <li><strong>Purpose:</strong> Product analytics and error tracking</li>
+      <li><strong>Privacy:</strong> We hash email addresses before sending. Raw emails are never sent to PostHog.</li>
+    </ul>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">4.2 Resend (Email)</h3>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Data shared:</strong> Email address, name, email content</li>
+      <li><strong>Purpose:</strong> Delivering transactional emails (verification, invitations, password resets, notification digests)</li>
+    </ul>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">4.3 Google (OAuth)</h3>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Data shared:</strong> OAuth tokens (only when you choose to sign in with Google)</li>
+      <li><strong>Purpose:</strong> Authentication</li>
+    </ul>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">4.4 Stripe (Payments)</h3>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Data shared:</strong> Email address, payment information (processed directly by Stripe, we do not store card numbers)</li>
+      <li><strong>Purpose:</strong> Subscription billing and payment processing</li>
+    </ul>
+
+    <p class="mt-4"><strong>We do not sell your personal data to anyone.</strong></p>
+    <p>We are not responsible for the privacy practices of third-party services. We encourage you to review their privacy policies.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">5. Data Retention</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border border-border rounded">
+        <thead>
+          <tr class="bg-surface-card">
+            <th scope="col" class="px-4 py-2 text-left font-medium border-b border-border">Data</th>
+            <th scope="col" class="px-4 py-2 text-left font-medium border-b border-border">Retention</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2">Account data</td>
+            <td class="px-4 py-2">Until you delete your account</td>
+          </tr>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2">Sessions</td>
+            <td class="px-4 py-2">30 days, auto-deleted on expiry</td>
+          </tr>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2">Email verification tokens</td>
+            <td class="px-4 py-2">Until used or expired</td>
+          </tr>
+          <tr class="border-b border-border">
+            <td class="px-4 py-2">Password reset tokens</td>
+            <td class="px-4 py-2">1 hour</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2">Change history</td>
+            <td class="px-4 py-2">Retained indefinitely (anonymized when account is deleted)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">6. Your Rights (GDPR)</h2>
+    <p>Under the GDPR, you have the right to:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Access</strong> — Request a copy of all personal data we hold about you</li>
+      <li><strong>Rectification</strong> — Correct inaccurate personal data</li>
+      <li><strong>Erasure</strong> — Delete your account and all associated data</li>
+      <li><strong>Data portability</strong> — Export your data in a machine-readable format</li>
+      <li><strong>Restriction</strong> — Request that we limit processing of your data</li>
+      <li><strong>Objection</strong> — Object to processing based on legitimate interest</li>
+      <li><strong>Withdraw consent</strong> — Where processing is based on consent, withdraw at any time</li>
+    </ul>
+    <p class="mt-3">To exercise any of these rights, email us at <a href="mailto:privacy@parlats.com" class="text-primary hover:underline">privacy@parlats.com</a>. We will respond within 30 days.</p>
+    <p>You also have the right to lodge a complaint with your local supervisory authority, or with AZOP in Croatia.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">7. Account Deletion</h2>
+    <p>You can delete your account at any time from your account settings. When you delete your account:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Your profile, sessions, and authentication data are permanently deleted</li>
+      <li>Your organization memberships are removed</li>
+      <li>Your comments and notifications are deleted</li>
+      <li>Your name is removed from audit history (entries are anonymized, not deleted)</li>
+      <li>API keys you created are disassociated from your account</li>
+    </ul>
+    <p class="mt-3">If you are the sole owner of an organization, you must transfer ownership before deleting your account.</p>
+    <p>Data already sent to third-party processors (PostHog, Resend, Stripe) is subject to their retention policies. We will submit deletion requests on your behalf where possible.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">8. Security</h2>
+    <p>We take reasonable measures to protect your data, including:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Password hashing using argon2id</li>
+      <li>Session tokens hashed with SHA-256 (plaintext never stored)</li>
+      <li>API keys hashed with argon2 (shown once at creation, never stored)</li>
+      <li>HTTPS in production</li>
+      <li>HttpOnly, SameSite cookies</li>
+      <li>CSRF protection on all forms</li>
+      <li>Content Security Policy with nonce-based script sources</li>
+      <li>Per-account login lockout after failed attempts</li>
+    </ul>
+    <p class="mt-3">However, no method of electronic storage or transmission over the Internet is 100% secure. We cannot and do not guarantee the absolute security of your data. You acknowledge that you provide your personal data at your own risk. We are not liable for any unauthorized access to, or loss or corruption of, your data, except where such liability cannot be excluded under applicable law.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">9. International Transfers</h2>
+    <p>Your data is processed in the European Union. If data is transferred outside the EU (e.g., to US-based sub-processors), we ensure appropriate safeguards are in place, such as Standard Contractual Clauses (SCCs) or adequacy decisions.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">10. Children</h2>
+    <p>The Service is not intended for anyone under the age of 16. We do not knowingly collect data from children. If you believe a child has provided us with personal data, contact us at <a href="mailto:privacy@parlats.com" class="text-primary hover:underline">privacy@parlats.com</a> and we will delete it.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">11. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. We will notify you of material changes by email or by posting a notice in the Service. The "Last updated" date at the top indicates the most recent revision.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">12. Contact</h2>
+    <p>For any questions about this Privacy Policy or your personal data:</p>
+    <p><strong>CodiHarbor</strong><br>Email: <a href="mailto:privacy@parlats.com" class="text-primary hover:underline">privacy@parlats.com</a></p>
+  </article>
+</main>
+
+<footer class="border-t border-border py-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="border-t border-border pt-6 text-center text-sm text-text-muted">
+      &copy; {{ year or "2026" }} CodiHarbor. <a href="/" class="text-text-secondary hover:text-text-primary no-underline">Parlats</a> — Open-source translation management.
+    </div>
+  </div>
+</footer>
+{% endblock %}

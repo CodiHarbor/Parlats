@@ -1,0 +1,55 @@
+<tr id="member-{{ member.id }}" class="border-b border-border last:border-0 hover:bg-surface-hover transition-colors">
+  <td class="px-4 py-3">
+    <div class="flex items-center gap-3">
+      <span class="w-8 h-8 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center shrink-0">
+        {{ (member.name or member.email)[0] | upper }}
+      </span>
+      <div>
+        <div class="font-medium text-text-primary">{{ member.name }}</div>
+        <div class="text-xs text-text-muted">{{ member.email }}</div>
+      </div>
+    </div>
+  </td>
+  <td class="px-4 py-3">
+    {% if member.role == 'owner' %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-warning/15 text-warning">{{ t("members.role_owner") }}</span>
+    {% elif member.role == 'admin' %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/15 text-primary">{{ t("members.role_admin") }}</span>
+    {% elif member.role == 'dev' %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-success/15 text-success">{{ t("members.role_developer") }}</span>
+    {% else %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-text-muted/15 text-text-secondary">{{ t("members.role_translator") }}</span>
+    {% endif %}
+  </td>
+  <td class="px-4 py-3 text-xs text-text-muted">{{ member.created_at | date }}</td>
+  <td class="px-4 py-3 text-right">
+    {% if member.role != 'owner' and (ctx.org.role == 'owner' or ctx.org.role == 'admin') and member.id != ctx.user.id %}
+    <div class="flex items-center justify-end gap-2">
+      {# Role change dropdown #}
+      <select name="role"
+        class="bg-surface border border-border rounded px-2 py-1 text-xs text-text-primary focus:border-primary focus:outline-none"
+        hx-post="/org/members/{{ member.id }}/role"
+        hx-target="#member-{{ member.id }}"
+        hx-swap="outerHTML"
+        hx-include="this">
+        {% if ctx.org.role == 'owner' or ctx.org.role == 'admin' %}
+        <option value="admin" {% if member.role == 'admin' %}selected{% endif %}>{{ t("members.role_admin") }}</option>
+        {% endif %}
+        <option value="dev" {% if member.role == 'dev' %}selected{% endif %}>{{ t("members.role_developer") }}</option>
+        <option value="translator" {% if member.role == 'translator' %}selected{% endif %}>{{ t("members.role_translator") }}</option>
+      </select>
+
+      {# Remove button #}
+      <form hx-post="/org/members/{{ member.id }}/remove"
+        hx-target="#members-table-container"
+        hx-swap="innerHTML"
+        hx-confirm="Remove {{ member.name }} from the organization?">
+        <button type="submit"
+          class="text-danger hover:text-danger/80 bg-transparent border-0 cursor-pointer text-xs px-1 py-1">
+          {{ t("common.remove") }}
+        </button>
+      </form>
+    </div>
+    {% endif %}
+  </td>
+</tr>

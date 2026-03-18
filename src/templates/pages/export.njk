@@ -1,0 +1,138 @@
+{% extends "base.njk" %}
+{% from "macros/ui.njk" import breadcrumbs, modal %}
+
+{% block title %}Export — {{ project.name }} — Parlats{% endblock %}
+
+{% block content %}
+{{ breadcrumbs([
+  { label: "Projects", url: "/projects" },
+  { label: project.name, url: "/projects/" + project.id },
+  { label: "Export" }
+]) }}
+
+<div class="max-w-2xl">
+  <h1 class="text-2xl font-bold mb-6">Export Translations</h1>
+
+  <form id="export-form" method="post" action="/projects/{{ project.id }}/export" class="space-y-8">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    {# Step 1: Format #}
+    <section>
+      <h2 class="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-3">1. Format</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="format-cards">
+        {% set formats = [
+          { value: "json-nested", label: "JSON (nested)", desc: "Hierarchical keys" },
+          { value: "json-flat", label: "JSON (flat)", desc: "Dot-notation keys" },
+          { value: "csv", label: "CSV", desc: "Multi-language spreadsheet" },
+          { value: "xlsx", label: "XLSX", desc: "Excel spreadsheet" },
+          { value: "yaml", label: "YAML", desc: "YAML format" }
+        ] %}
+        {% for fmt in formats %}
+        <label class="export-format-card relative flex flex-col items-center gap-1 p-4 rounded-lg border-2 cursor-pointer transition-colors
+                      {% if fmt.value == 'json-nested' %}border-primary bg-primary/10{% else %}border-border bg-surface-card hover:border-border-strong{% endif %}">
+          <input type="radio" name="format" value="{{ fmt.value }}"
+                 {% if fmt.value == "json-nested" %}checked{% endif %}
+                 class="sr-only"
+                 onchange="updateExportSteps()">
+          <span class="text-sm font-medium text-text-primary">{{ fmt.label }}</span>
+          <span class="text-xs text-text-muted">{{ fmt.desc }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </section>
+
+    {# Step 2: Namespace #}
+    <section>
+      <h2 class="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-3" id="namespace-heading">
+        2. Namespace
+      </h2>
+      <div class="space-y-2" id="namespace-list">
+        {% for ns in namespaces %}
+        <label class="flex items-center gap-3 p-3 rounded-lg border border-border bg-surface-card hover:border-border-strong cursor-pointer transition-colors">
+          <input type="radio" name="namespaces[]" value="{{ ns.id }}"
+                 {% if ns.id == project.default_namespace_id %}checked{% endif %}
+                 class="namespace-input accent-primary"
+                 data-default="{{ 'true' if ns.id == project.default_namespace_id else 'false' }}">
+          <span class="flex-1">
+            <span class="text-sm font-medium text-text-primary">{{ ns.name }}</span>
+            <span class="text-xs text-text-muted ml-1">({{ ns.key_count }} keys)</span>
+          </span>
+        </label>
+        {% endfor %}
+      </div>
+    </section>
+
+    {# Step 3: Language #}
+    <section>
+      <h2 class="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-3" id="language-heading">
+        3. Language
+      </h2>
+      {# Hidden input ensures default language is always submitted even when its checkbox is disabled #}
+      <input type="hidden" name="languages[]" id="default-lang-hidden" value="{{ project.default_language }}" disabled>
+      <div class="space-y-2" id="language-list">
+        {% for lang in languages %}
+        <label class="flex items-center gap-3 p-3 rounded-lg border border-border bg-surface-card hover:border-border-strong cursor-pointer transition-colors">
+          <input type="radio" name="languages[]" value="{{ lang.language_code }}"
+                 {% if lang.language_code == project.default_language %}checked{% endif %}
+                 class="language-input accent-primary"
+                 data-default="{{ 'true' if lang.language_code == project.default_language else 'false' }}">
+          <span class="flex-1">
+            <span class="text-sm font-medium text-text-primary">{{ lang.language_code }}</span>
+            {% if lang.label %}<span class="text-xs text-text-muted ml-1">— {{ lang.label }}</span>{% endif %}
+          </span>
+        </label>
+        {% endfor %}
+      </div>
+
+      {# Only-missing filter (CSV/XLSX only) #}
+      <div id="only-missing-filter" class="mt-3 hidden">
+        <label class="flex items-center gap-3 p-3 rounded-lg border border-dashed border-border bg-surface hover:border-border-strong cursor-pointer transition-colors">
+          <input type="checkbox" name="only_missing" value="1" class="accent-primary">
+          <span class="text-sm text-text-secondary">Only export rows with missing translations for selected languages</span>
+        </label>
+      </div>
+    </section>
+
+    {# Step 4: Actions #}
+    <section class="flex gap-3">
+      <button type="button" id="preview-btn"
+              class="flex-1 px-4 py-2.5 bg-surface-card hover:bg-surface-hover border border-border text-text-primary rounded-lg font-medium text-sm cursor-pointer transition-colors"
+              hx-post="/projects/{{ project.id }}/export/preview"
+              hx-target="#preview-content"
+              hx-swap="innerHTML"
+              hx-include="#export-form"
+              onclick="document.getElementById('export-preview-modal').showModal()">
+        Preview
+      </button>
+      <button type="submit"
+              class="flex-1 px-4 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium text-sm cursor-pointer transition-colors">
+        Download
+      </button>
+    </section>
+  </form>
+</div>
+
+{# Preview modal #}
+{% call modal("export-preview-modal", "Export Preview", "max-w-4xl") %}
+<div id="preview-content" class="text-sm">
+  <p class="text-text-muted text-center py-8">Loading preview...</p>
+</div>
+{% endcall %}
+
+{# Pass project data to JS #}
+<script nonce="{{ nonce }}">
+  window.__exportConfig = {
+    defaultNamespaceId: "{{ project.default_namespace_id }}",
+    defaultLanguage: "{{ project.default_language }}"
+  };
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ nonce }}">
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', function() {
+    updateExportSteps();
+  });
+</script>
+{% endblock %}

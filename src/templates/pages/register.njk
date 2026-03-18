@@ -1,0 +1,104 @@
+{# register.njk — standalone page, no sidebar layout #}
+<!DOCTYPE html>
+<html lang="en" class="dark notranslate" translate="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create account — Parlats</title>
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/public/favicon-32x32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/public/favicon-16x16.png" sizes="16x16" type="image/png">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="manifest" href="/public/site.webmanifest">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="robots" content="noindex">
+  <meta property="og:title" content="Create account — Parlats">
+  <meta property="og:site_name" content="Parlats">
+  {% if appUrl %}<meta property="og:image" content="{{ appUrl }}/public/icon-512.png">{% endif %}
+  <link rel="stylesheet" href="/public/tailwind.css">
+</head>
+<body class="flex items-center justify-center min-h-screen bg-surface text-text-primary">
+  <div class="w-full max-w-sm mx-4">
+    {# Brand #}
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-bold flex items-center justify-center gap-2">
+        <img src="/public/favicon.svg" alt="" style="width:1.75rem;height:1.75rem" class="w-7 h-7 rounded"> Parlats
+      </h1>
+      <p class="text-text-secondary text-sm mt-2">Create your account</p>
+    </div>
+
+    {# Card #}
+    <div class="bg-surface-card border border-border rounded-lg p-6">
+      {% if error == "all_fields_required" %}
+      <div class="mb-4 p-3 rounded bg-danger/10 border border-danger/30 text-sm text-danger">
+        All fields are required.
+      </div>
+      {% elif error == "password_too_short" %}
+      <div class="mb-4 p-3 rounded bg-danger/10 border border-danger/30 text-sm text-danger">
+        Password must be at least 8 characters.
+      </div>
+      {% elif error == "email_taken" %}
+      <div class="mb-4 p-3 rounded bg-danger/10 border border-danger/30 text-sm text-danger">
+        An account with this email already exists. <a href="/login" class="text-primary hover:text-primary-hover underline">Sign in instead</a>
+      </div>
+      {% endif %}
+
+      {# Registration form #}
+      <form method="post" action="/register" class="space-y-3 mb-4">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        {% if invite %}
+        <input type="hidden" name="invite" value="{{ invite }}">
+        {% endif %}
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-1" for="name">Your name</label>
+          <input type="text" id="name" name="name" value="{{ name or '' }}" required autocomplete="name"
+                 class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-1" for="email">Email</label>
+          <input type="email" id="email" name="email" value="{{ email or '' }}" required autocomplete="email"
+                 class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-1" for="password">Password</label>
+          <input type="password" id="password" name="password" required autocomplete="new-password" minlength="8"
+                 class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none">
+          <p class="text-xs text-text-muted mt-1">At least 8 characters.</p>
+        </div>
+        <button type="submit"
+                class="w-full px-4 py-2.5 rounded-lg bg-primary text-white font-medium text-sm hover:bg-primary-hover transition-colors">
+          Create account
+        </button>
+      </form>
+
+      {# Divider #}
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex-1 h-px bg-border"></div>
+        <span class="text-xs text-text-muted">or</span>
+        <div class="flex-1 h-px bg-border"></div>
+      </div>
+
+      {# Google OAuth #}
+      <a href="/auth/google{% if invite %}?invite={{ invite }}{% endif %}"
+         class="flex items-center justify-center gap-3 w-full px-4 py-2.5 rounded-lg
+                bg-white text-gray-800 font-medium text-sm
+                hover:bg-gray-100 transition-colors no-underline">
+        <svg class="w-5 h-5" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Sign up with Google
+      </a>
+    </div>
+
+    <p class="text-center text-text-secondary text-sm mt-4">
+      Already have an account? <a href="/login{% if invite %}?invite={{ invite }}{% endif %}" class="text-primary hover:text-primary-hover no-underline">Sign in</a>
+    </p>
+    <p class="text-center text-text-muted text-xs mt-3">
+      By creating an account, you agree to our <a href="/terms" target="_blank" class="text-text-secondary hover:text-text-primary underline">Terms of Service</a> and <a href="/privacy" target="_blank" class="text-text-secondary hover:text-text-primary underline">Privacy Policy</a>.
+    </p>
+  </div>
+</body>
+</html>

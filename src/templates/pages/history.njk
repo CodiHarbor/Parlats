@@ -1,0 +1,44 @@
+{% extends "base.njk" %}
+{% from "macros/ui.njk" import breadcrumbs, empty_state %}
+
+{% block title %}Change History — {{ project.name }} — Parlats{% endblock %}
+
+{% block content %}
+{{ breadcrumbs([
+  { label: t("nav.projects"), url: "/projects" },
+  { label: project.name, url: "/projects/" + project.id },
+  { label: t("history.title") }
+]) }}
+
+<div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-bold">{{ t("history.title") }}</h1>
+    <p class="text-text-muted text-sm">{{ t("history.subtitle", { name: project.name }) }}</p>
+  </div>
+  <div>
+    <select id="history-type-filter"
+      hx-get="/projects/{{ project.id }}/history"
+      hx-target="#history-content"
+      hx-swap="innerHTML"
+      name="type"
+      class="bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-primary">
+      <option value="">{{ t("history.filter_all") }}</option>
+      <option value="edit">{{ t("history.filter_edits") }}</option>
+      <option value="import_json">{{ t("history.filter_json_imports") }}</option>
+      <option value="import_csv">{{ t("history.filter_csv_imports") }}</option>
+      <option value="import_yaml">{{ t("history.filter_yaml_imports") }}</option>
+      <option value="batch_add">{{ t("history.filter_batch_adds") }}</option>
+      <option value="batch_delete">{{ t("history.filter_deletions") }}</option>
+      <option value="ai_translate">{{ t("history.filter_ai_translations") }}</option>
+    </select>
+  </div>
+</div>
+
+<div id="history-content"
+     aria-live="polite"
+     hx-get="/projects/{{ project.id }}/history"
+     hx-trigger="load"
+     hx-swap="innerHTML">
+  <p class="text-text-muted text-sm" aria-busy="true">{{ t("history.loading") }}</p>
+</div>
+{% endblock %}

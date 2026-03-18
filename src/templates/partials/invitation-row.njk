@@ -1,0 +1,25 @@
+<tr id="invitation-{{ inv.id }}" class="border-b border-border last:border-0 hover:bg-surface-hover transition-colors">
+  <td class="px-4 py-3 text-text-primary">{{ inv.email }}</td>
+  <td class="px-4 py-3">
+    {% if inv.role == 'admin' %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/15 text-primary">{{ t("members.role_admin") }}</span>
+    {% elif inv.role == 'dev' %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-success/15 text-success">{{ t("members.role_developer") }}</span>
+    {% else %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-text-muted/15 text-text-secondary">{{ t("members.role_translator") }}</span>
+    {% endif %}
+  </td>
+  <td class="px-4 py-3 text-xs text-text-muted">{{ inv.invited_by_name }}</td>
+  <td class="px-4 py-3 text-xs text-text-muted">{{ inv.expires_at | date }}</td>
+  <td class="px-4 py-3 text-right">
+    <form hx-post="/org/invitations/{{ inv.id }}/revoke"
+      hx-target="#invitation-{{ inv.id }}"
+      hx-swap="outerHTML"
+      hx-confirm="Revoke invitation to {{ inv.email }}?">
+      <button type="submit"
+        class="text-danger hover:text-danger/80 bg-transparent border-0 cursor-pointer text-xs">
+        {{ t("common.revoke") }}
+      </button>
+    </form>
+  </td>
+</tr>

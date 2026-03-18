@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="{{ locale or 'en' }}" class="dark notranslate" translate="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google" content="notranslate">
+  <meta name="csrf-token" content="{{ csrfToken }}">
+  <title>{% block title %}Parlats{% endblock %}</title>
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/public/favicon-32x32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/public/favicon-16x16.png" sizes="16x16" type="image/png">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="manifest" href="/public/site.webmanifest">
+  <meta name="theme-color" content="#6366f1">
+  {# OG — useful when app links are shared in chat #}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Parlats">
+  <meta property="og:title" content="{% block og_title %}Parlats{% endblock %}">
+  {% if appUrl %}<meta property="og:image" content="{{ appUrl }}/public/icon-512.png">{% endif %}
+  <link rel="stylesheet" href="/public/tailwind.css">
+  {% block head %}{% endblock %}
+</head>
+<body class="flex min-h-screen bg-surface text-text-primary">
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded">Skip to main content</a>
+  {% from "macros/icons.njk" import icon %}
+
+  {# Mobile top bar — visible below lg #}
+  <div class="lg:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-surface-card border-b border-border">
+    <button type="button" onclick="toggleSidebar()" aria-label="Toggle menu" aria-expanded="false" id="sidebar-toggle"
+      class="text-text-secondary hover:text-text-primary bg-transparent border-0 cursor-pointer p-1">
+      {{ icon("menu", "w-6 h-6") }}
+    </button>
+    <a href="/" class="text-lg font-bold text-text-primary no-underline flex items-center gap-1.5">
+      <img src="/public/favicon.svg" alt="" style="width:1.25rem;height:1.25rem" class="w-5 h-5"> Parlats
+    </a>
+  </div>
+
+  {# Backdrop — hidden by default, shown when sidebar is open on mobile #}
+  <div id="sidebar-backdrop" class="hidden lg:hidden fixed inset-0 bg-black/50 z-30" onclick="toggleSidebar()"></div>
+
+  {# Sidebar — always visible on lg+, drawer on mobile #}
+  <aside id="sidebar" aria-label="Main navigation"
+    class="w-60 shrink-0 flex flex-col bg-surface-card border-r border-border
+           fixed inset-y-0 left-0 z-40
+           lg:sticky lg:top-0 lg:h-screen overflow-y-auto
+           -translate-x-full lg:translate-x-0
+           transition-transform duration-200 ease-in-out">
+    {# Brand #}
+    <a href="/" class="flex items-center gap-2 px-4 py-4 text-lg font-bold text-text-primary no-underline">
+      <img src="/public/favicon.svg" alt="" style="width:1.25rem;height:1.25rem" class="w-5 h-5 rounded"> Parlats
+    </a>
+
+    {# Org Switcher #}
+    {% if ctx and ctx.org and ctx.userOrgs and ctx.userOrgs.length > 1 %}
+    <div class="px-3 mb-3">
+      <form method="post" action="/org/switch/" id="org-switch-form">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <select name="org" aria-label="Switch organization"
+          class="w-full bg-surface border border-border rounded pl-2 pr-8 py-1.5 text-sm text-text-primary"
+          onchange="this.form.action='/org/switch/'+this.value; this.form.submit()">
+          {% for userOrg in ctx.userOrgs %}
+          <option value="{{ userOrg.id }}" {% if userOrg.id == ctx.org.id %}selected{% endif %}>{{ userOrg.name }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+    {% elif ctx and ctx.org %}
+    <div class="px-3 mb-3">
+      <div class="w-full bg-surface border border-border rounded pl-2 pr-2 py-1.5 text-sm text-text-primary truncate">
+        {{ ctx.org.name }}
+      </div>
+    </div>
+    {% endif %}
+
+    {# Language Switcher #}
+    <form method="post" action="/user/locale" class="px-3 mb-3">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <select name="locale" aria-label="Change language" onchange="this.form.submit()"
+        class="w-full bg-surface border border-border rounded pl-2 pr-8 py-1.5 text-sm text-text-primary">
+        {% for loc in ["en", "es", "fr", "de", "ja"] %}
+        <option value="{{ loc }}" {% if locale == loc %}selected{% endif %}>
+          {% if loc == "en" %}English{% elif loc == "es" %}Español{% elif loc == "fr" %}Français{% elif loc == "de" %}Deutsch{% elif loc == "ja" %}日本語{% endif %}
+        </option>
+        {% endfor %}
+      </select>
+    </form>
+
+    {# Navigation #}
+    <nav aria-label="Main navigation" class="flex-1 px-2">
+      <ul class="space-y-0.5 list-none p-0 m-0">
+        <li>
+          <a href="/dashboard"
+             class="flex items-center gap-3 px-3 py-2 rounded text-sm no-underline
+                    {% if activePage == 'dashboard' %}bg-primary/15 text-primary font-semibold{% else %}text-text-secondary hover:bg-surface-hover hover:text-text-primary{% endif %}">
+            {{ icon("dashboard", "w-4 h-4") }} {{ t("nav.dashboard") }}
+          </a>
+        </li>
+        <li>
+          <a href="/projects"
+             class="flex items-center gap-3 px-3 py-2 rounded text-sm no-underline
+                    {% if activePage == 'projects' %}bg-primary/15 text-primary font-semibold{% else %}text-text-secondary hover:bg-surface-hover hover:text-text-primary{% endif %}">
+            {{ icon("folder", "w-4 h-4") }} {{ t("nav.projects") }}
+          </a>
+        </li>
+        {% if ctx and ctx.org and (ctx.org.role == 'owner' or ctx.org.role == 'admin') %}
+        <li>
+          <a href="/org/members"
+             class="flex items-center gap-3 px-3 py-2 rounded text-sm no-underline
+                    {% if activePage == 'members' %}bg-primary/15 text-primary font-semibold{% else %}text-text-secondary hover:bg-surface-hover hover:text-text-primary{% endif %}">
+            {{ icon("users", "w-4 h-4") }} {{ t("nav.members") }}
+          </a>
+        </li>
+        <li>
+          <a href="/org/api-keys"
+             class="flex items-center gap-3 px-3 py-2 rounded text-sm no-underline
+                    {% if activePage == 'api-keys' %}bg-primary/15 text-primary font-semibold{% else %}text-text-secondary hover:bg-surface-hover hover:text-text-primary{% endif %}">
+            {{ icon("key", "w-4 h-4") }} {{ t("nav.api_keys") }}
+          </a>
+        </li>
+        <li>
+          <a href="/org/settings"
+             class="flex items-center gap-3 px-3 py-2 rounded text-sm no-underline
+                    {% if activePage == 'settings' %}bg-primary/15 text-primary font-semibold{% else %}text-text-secondary hover:bg-surface-hover hover:text-text-primary{% endif %}">
+            {{ icon("cog", "w-4 h-4") }} {{ t("nav.settings") }}
+          </a>
+        </li>
+        <li>
+          <a href="/billing"
+             class="flex items-center gap-3 px-3 py-2 rounded text-sm no-underline
+                    {% if activePage == 'billing' %}bg-primary/15 text-primary font-semibold{% else %}text-text-secondary hover:bg-surface-hover hover:text-text-primary{% endif %}">
+            {{ icon("credit-card", "w-4 h-4") }} {{ t("nav.billing") }}
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+
+    {# Sidebar footer #}
+    <div class="border-t border-border px-3 py-3 mt-auto">
+      {% if ctx and ctx.user %}
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full bg-success text-surface text-xs font-bold flex items-center justify-center shrink-0">
+          {{ (ctx.user.name or ctx.user.email)[0] | upper }}
+        </span>
+        <span class="text-sm text-text-secondary truncate flex-1">{{ ctx.user.name or ctx.user.email }}</span>
+        <form method="post" action="/auth/logout" class="shrink-0">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+          <button type="submit" class="text-text-muted hover:text-text-primary p-1 bg-transparent border-0 cursor-pointer" title="Sign out" aria-label="Sign out">
+            {{ icon("logout", "w-4 h-4") }}
+          </button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+  </aside>
+
+  {# Main content #}
+  <div class="flex-1 min-w-0 flex flex-col pt-14 lg:pt-0">
+    {% include "partials/banner-billing.njk" %}
+    <header class="relative flex items-center justify-end gap-4 px-6 py-3 border-b border-border">
+      {% block header %}{% endblock %}
+    </header>
+
+    <main id="main-content" class="flex-1 p-4 lg:p-6">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script nonce="{{ nonce }}" src="/public/htmx.min.js"></script>
+  <script nonce="{{ nonce }}" src="/public/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

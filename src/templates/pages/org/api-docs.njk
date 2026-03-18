@@ -1,0 +1,298 @@
+{% extends "base.njk" %}
+
+{% block title %}API Documentation — {{ ctx.org.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl space-y-8">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-text-primary">{{ t("api.docs_title") }}</h1>
+      <p class="text-sm text-text-secondary mt-1">{{ t("api.docs_subtitle") }}</p>
+    </div>
+    <a href="/org/api-keys" class="px-3 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover no-underline">
+      {{ t("api.manage_keys") }}
+    </a>
+  </div>
+
+  {# Authentication #}
+  <section class="bg-surface-card border border-border rounded-lg p-6 space-y-4">
+    <h2 class="text-lg font-semibold text-text-primary">{{ t("api.docs_auth_title") }}</h2>
+    <p class="text-sm text-text-secondary">{{ t("api.docs_auth_description") }}</p>
+    <div class="bg-surface-bg rounded-lg p-4">
+      <pre class="text-sm text-text-primary font-mono whitespace-pre-wrap m-0">Authorization: Bearer trad_&lt;prefix&gt;_&lt;secret&gt;</pre>
+    </div>
+    <p class="text-sm text-text-secondary">Create API keys at <a href="/org/api-keys" class="text-primary hover:underline">/org/api-keys</a>. Keys can be scoped by permission (read, write, import, export) and by project.</p>
+  </section>
+
+  {# Rate Limiting #}
+  <section class="bg-surface-card border border-border rounded-lg p-6 space-y-4">
+    <h2 class="text-lg font-semibold text-text-primary">{{ t("api.docs_rate_limit_title") }}</h2>
+    <p class="text-sm text-text-secondary">{{ t("api.docs_rate_limit_description") }}</p>
+    <div class="bg-surface-bg rounded-lg p-4">
+      <pre class="text-sm text-text-primary font-mono whitespace-pre-wrap m-0">X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 97
+X-RateLimit-Reset: 1709145660</pre>
+    </div>
+    <p class="text-sm text-text-secondary">When exceeded, the API returns <code class="bg-surface-bg px-1.5 py-0.5 rounded text-xs">429 Too Many Requests</code> with a <code class="bg-surface-bg px-1.5 py-0.5 rounded text-xs">Retry-After</code> header (seconds).</p>
+  </section>
+
+  {# Response Format #}
+  <section class="bg-surface-card border border-border rounded-lg p-6 space-y-4">
+    <h2 class="text-lg font-semibold text-text-primary">{{ t("api.docs_response_title") }}</h2>
+    <div class="grid gap-4 md:grid-cols-2">
+      <div>
+        <h3 class="text-sm font-medium text-text-primary mb-2">{{ t("api.docs_response_success_single") }}</h3>
+        <div class="bg-surface-bg rounded-lg p-3">
+          <pre class="text-xs text-text-primary font-mono whitespace-pre-wrap m-0">{ "data": { ... } }</pre>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-text-primary mb-2">{{ t("api.docs_response_success_list") }}</h3>
+        <div class="bg-surface-bg rounded-lg p-3">
+          <pre class="text-xs text-text-primary font-mono whitespace-pre-wrap m-0">{
+  "data": [...],
+  "meta": {
+    "total": 100,
+    "page": 1,
+    "perPage": 50
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 class="text-sm font-medium text-text-primary mb-2">{{ t("api.docs_response_error") }}</h3>
+      <div class="bg-surface-bg rounded-lg p-3">
+        <pre class="text-xs text-text-primary font-mono whitespace-pre-wrap m-0">{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Project not found"
+  }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  {# Error Codes #}
+  <section class="bg-surface-card border border-border rounded-lg p-6 space-y-4">
+    <h2 class="text-lg font-semibold text-text-primary">{{ t("api.docs_error_codes_title") }}</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-border">
+            <th scope="col" class="text-left py-2 text-text-secondary font-medium">{{ t("api.docs_error_code") }}</th>
+            <th scope="col" class="text-left py-2 text-text-secondary font-medium">{{ t("api.docs_error_status") }}</th>
+            <th scope="col" class="text-left py-2 text-text-secondary font-medium">{{ t("api.docs_error_description") }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          <tr><td class="py-2 font-mono text-xs text-text-primary">UNAUTHORIZED</td><td class="py-2 text-text-secondary">401</td><td class="py-2 text-text-secondary">{{ t("api.error_unauthorized") }}</td></tr>
+          <tr><td class="py-2 font-mono text-xs text-text-primary">FORBIDDEN</td><td class="py-2 text-text-secondary">403</td><td class="py-2 text-text-secondary">{{ t("api.error_forbidden") }}</td></tr>
+          <tr><td class="py-2 font-mono text-xs text-text-primary">NOT_FOUND</td><td class="py-2 text-text-secondary">404</td><td class="py-2 text-text-secondary">{{ t("api.error_not_found") }}</td></tr>
+          <tr><td class="py-2 font-mono text-xs text-text-primary">VALIDATION_ERROR</td><td class="py-2 text-text-secondary">400</td><td class="py-2 text-text-secondary">{{ t("api.error_validation") }}</td></tr>
+          <tr><td class="py-2 font-mono text-xs text-text-primary">RATE_LIMITED</td><td class="py-2 text-text-secondary">429</td><td class="py-2 text-text-secondary">{{ t("api.error_rate_limited") }}</td></tr>
+          <tr><td class="py-2 font-mono text-xs text-text-primary">CONFLICT</td><td class="py-2 text-text-secondary">409</td><td class="py-2 text-text-secondary">{{ t("api.error_conflict") }}</td></tr>
+          <tr><td class="py-2 font-mono text-xs text-text-primary">INTERNAL_ERROR</td><td class="py-2 text-text-secondary">500</td><td class="py-2 text-text-secondary">{{ t("api.error_internal") }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {# Endpoints #}
+  <section class="bg-surface-card border border-border rounded-lg p-6 space-y-6">
+    <h2 class="text-lg font-semibold text-text-primary">{{ t("api.docs_endpoints_title") }}</h2>
+
+    {# Projects #}
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold text-text-primary uppercase tracking-wide border-b border-border pb-2">{{ t("api.docs_section_projects") }}</h3>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-green-500/10 text-green-400">GET</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects</code>
+          <span class="text-xs text-text-secondary ml-auto">read</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">{{ t("api.endpoint_list_projects") }}</p>
+      </div>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-green-500/10 text-green-400">GET</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id</code>
+          <span class="text-xs text-text-secondary ml-auto">read</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">{{ t("api.endpoint_get_project") }}</p>
+      </div>
+    </div>
+
+    {# Translation Keys #}
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold text-text-primary uppercase tracking-wide border-b border-border pb-2">{{ t("api.docs_section_keys") }}</h3>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-green-500/10 text-green-400">GET</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/keys</code>
+          <span class="text-xs text-text-secondary ml-auto">read</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">List keys. Query: <code class="bg-surface-bg px-1 rounded">?search=&namespace=&page=&perPage=</code></p>
+      </div>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/10 text-blue-400">POST</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/keys</code>
+          <span class="text-xs text-text-secondary ml-auto">write</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">Create keys. Body: <code class="bg-surface-bg px-1 rounded">{"keys":[{"name":"...","namespace":"default"}]}</code></p>
+      </div>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-yellow-500/10 text-yellow-400">PATCH</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/keys/:keyId</code>
+          <span class="text-xs text-text-secondary ml-auto">write</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">Update key. Body: <code class="bg-surface-bg px-1 rounded">{"name":"...","namespace":"..."}</code></p>
+      </div>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-red-500/10 text-red-400">DELETE</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/keys/:keyId</code>
+          <span class="text-xs text-text-secondary ml-auto">write</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">{{ t("api.endpoint_delete_key") }}</p>
+      </div>
+    </div>
+
+    {# Translations #}
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold text-text-primary uppercase tracking-wide border-b border-border pb-2">{{ t("api.docs_section_translations") }}</h3>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-green-500/10 text-green-400">GET</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/translations</code>
+          <span class="text-xs text-text-secondary ml-auto">read</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">List translations. Query: <code class="bg-surface-bg px-1 rounded">?lang=&namespace=&page=&perPage=</code></p>
+      </div>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-purple-500/10 text-purple-400">PUT</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/translations/:keyId</code>
+          <span class="text-xs text-text-secondary ml-auto">write</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">Upsert translation. Body: <code class="bg-surface-bg px-1 rounded">{"lang":"fr","value":"Bonjour"}</code></p>
+      </div>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-green-500/10 text-green-400">GET</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/missing/:lang</code>
+          <span class="text-xs text-text-secondary ml-auto">read</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">{{ t("api.endpoint_list_missing") }}</p>
+      </div>
+    </div>
+
+    {# Import & Export #}
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold text-text-primary uppercase tracking-wide border-b border-border pb-2">{{ t("api.docs_section_import_export") }}</h3>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/10 text-blue-400">POST</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/import</code>
+          <span class="text-xs text-text-secondary ml-auto">import</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">Import translations. Multipart: <code class="bg-surface-bg px-1 rounded">file</code>, <code class="bg-surface-bg px-1 rounded">lang</code>, <code class="bg-surface-bg px-1 rounded">format</code> (optional), <code class="bg-surface-bg px-1 rounded">namespace</code> (optional). Max 5MB.</p>
+      </div>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-green-500/10 text-green-400">GET</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/export</code>
+          <span class="text-xs text-text-secondary ml-auto">export</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">Export translations. Query: <code class="bg-surface-bg px-1 rounded">?lang=&format=json-nested&namespace=</code>. Formats: json-nested, json-flat, csv, yaml.</p>
+      </div>
+    </div>
+
+    {# History #}
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold text-text-primary uppercase tracking-wide border-b border-border pb-2">{{ t("api.docs_section_history") }}</h3>
+
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-xs font-bold bg-green-500/10 text-green-400">GET</span>
+          <code class="text-sm font-mono text-text-primary">/api/v1/projects/:id/history</code>
+          <span class="text-xs text-text-secondary ml-auto">read</span>
+        </div>
+        <p class="text-xs text-text-secondary pl-14">Change history. Query: <code class="bg-surface-bg px-1 rounded">?page=&perPage=</code></p>
+      </div>
+    </div>
+  </section>
+
+  {# Examples #}
+  {% set baseUrl = appUrl %}
+  <section class="bg-surface-card border border-border rounded-lg p-6 space-y-4">
+    <h2 class="text-lg font-semibold text-text-primary">{{ t("api.docs_examples_title") }}</h2>
+
+    <div class="space-y-4">
+      <div>
+        <h3 class="text-sm font-medium text-text-primary mb-2">{{ t("api.docs_example_list_projects") }}</h3>
+        <div class="bg-surface-bg rounded-lg p-4">
+          <pre class="text-xs text-text-primary font-mono whitespace-pre-wrap m-0">curl -H "Authorization: Bearer trad_abc12345_your_secret_here" \
+  {{ baseUrl }}/api/v1/projects</pre>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-medium text-text-primary mb-2">{{ t("api.docs_example_create_keys") }}</h3>
+        <div class="bg-surface-bg rounded-lg p-4">
+          <pre class="text-xs text-text-primary font-mono whitespace-pre-wrap m-0">curl -X POST \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"keys":[{"name":"common.hello"},{"name":"common.goodbye"}]}' \
+  {{ baseUrl }}/api/v1/projects/PROJECT_ID/keys</pre>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-medium text-text-primary mb-2">{{ t("api.docs_example_update_translation") }}</h3>
+        <div class="bg-surface-bg rounded-lg p-4">
+          <pre class="text-xs text-text-primary font-mono whitespace-pre-wrap m-0">curl -X PUT \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"lang":"fr","value":"Bonjour"}' \
+  {{ baseUrl }}/api/v1/projects/PROJECT_ID/translations/KEY_ID</pre>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-medium text-text-primary mb-2">{{ t("api.docs_example_export") }}</h3>
+        <div class="bg-surface-bg rounded-lg p-4">
+          <pre class="text-xs text-text-primary font-mono whitespace-pre-wrap m-0">curl -H "Authorization: Bearer $API_KEY" \
+  "{{ baseUrl }}/api/v1/projects/PROJECT_ID/export?lang=en&format=json-nested" \
+  -o translations_en.json</pre>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-sm font-medium text-text-primary mb-2">{{ t("api.docs_example_import") }}</h3>
+        <div class="bg-surface-bg rounded-lg p-4">
+          <pre class="text-xs text-text-primary font-mono whitespace-pre-wrap m-0">curl -X POST \
+  -H "Authorization: Bearer $API_KEY" \
+  -F "file=@translations_fr.json" \
+  -F "lang=fr" \
+  -F "format=json-nested" \
+  {{ baseUrl }}/api/v1/projects/PROJECT_ID/import</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

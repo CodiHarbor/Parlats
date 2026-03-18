@@ -1,0 +1,308 @@
+{% extends "base.njk" %}
+{% from "macros/ui.njk" import breadcrumbs %}
+
+{% block title %}Import — {{ project.name }} — Parlats{% endblock %}
+
+{% block content %}
+{{ breadcrumbs([
+  { label: t("nav.projects"), url: "/projects" },
+  { label: project.name, url: "/projects/" + project.id },
+  { label: t("editor.import") }
+]) }}
+
+<div class="max-w-2xl">
+  <h1 class="text-2xl font-bold mb-6">Import Translations</h1>
+
+  {% if error %}
+  <div class="p-4 mb-4 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  {# Step indicator #}
+  <div class="flex items-center gap-2 mb-6" id="step-indicator">
+    <div id="step-ind-1" class="flex items-center gap-1.5 text-sm font-medium text-primary">
+      <span class="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center font-bold">1</span>
+      Upload
+    </div>
+    <div class="flex-1 h-px bg-border"></div>
+    <div id="step-ind-2" class="flex items-center gap-1.5 text-sm font-medium text-text-muted">
+      <span class="w-6 h-6 rounded-full bg-surface-card border border-border text-text-muted text-xs flex items-center justify-center font-bold">2</span>
+      Review
+    </div>
+    <div class="flex-1 h-px bg-border"></div>
+    <div id="step-ind-3" class="flex items-center gap-1.5 text-sm font-medium text-text-muted">
+      <span class="w-6 h-6 rounded-full bg-surface-card border border-border text-text-muted text-xs flex items-center justify-center font-bold">3</span>
+      Import
+    </div>
+  </div>
+
+  {# Step 1: Upload #}
+  <div id="step-upload">
+    <form id="upload-form"
+          hx-post="/projects/{{ project.id }}/import/detect"
+          hx-target="#step-detect"
+          hx-swap="innerHTML"
+          hx-encoding="multipart/form-data"
+          class="space-y-4 p-5 bg-surface-card border border-border rounded-lg">
+
+      {# Drag & drop zone #}
+      <div id="drop-zone"
+           class="border-2 border-dashed border-border rounded-lg p-8 text-center transition-colors cursor-pointer hover:border-primary/50">
+        <div class="mb-3">
+          <svg class="w-10 h-10 mx-auto text-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+          </svg>
+        </div>
+        <p class="text-sm text-text-secondary mb-1">Drag and drop your file here, or click to browse</p>
+        <p class="text-xs text-text-muted">Supports JSON, CSV, YAML, and XLSX files (max 5MB)</p>
+        <input type="file" name="file" id="file-input" accept=".json,.csv,.yml,.yaml,.xlsx,.xls" required
+          class="hidden">
+      </div>
+
+      {# Selected file info #}
+      <div id="file-info" class="hidden flex items-center gap-3 p-3 bg-surface border border-border rounded-lg">
+        <svg class="w-5 h-5 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+        </svg>
+        <div class="flex-1 min-w-0">
+          <p id="file-name" class="text-sm font-medium text-text-primary truncate"></p>
+          <p id="file-size" class="text-xs text-text-muted"></p>
+        </div>
+        <button type="button" id="file-clear" class="text-text-muted hover:text-text-primary bg-transparent border-0 cursor-pointer p-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <button type="submit" id="upload-btn" disabled
+        class="w-full px-4 py-2.5 bg-primary hover:bg-primary-hover text-white rounded font-medium text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
+        <span id="upload-btn-text">Upload &amp; Analyze</span>
+        <span id="upload-btn-loading" class="hidden">
+          <svg class="inline w-4 h-4 animate-spin mr-1" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          Analyzing...
+        </span>
+      </button>
+    </form>
+  </div>
+
+  {# Step 2: Detect/Review — filled by HTMX response #}
+  <div id="step-detect"></div>
+
+  {# Step 3: Import complete — hidden by default #}
+  <div id="step-complete" class="hidden">
+    <div class="p-6 bg-surface-card border border-border rounded-lg text-center">
+      <div class="mb-4">
+        <svg class="w-8 h-8 mx-auto text-green-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <h2 class="text-lg font-semibold text-text-primary mb-2">Import Started</h2>
+      <p class="text-sm text-text-secondary mb-4">Your translations are being imported. You will be redirected to the editor shortly.</p>
+      <div class="w-full bg-surface rounded-full h-2 mb-4 overflow-hidden">
+        <div id="wizard-progress-bar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+      <p class="text-xs text-text-muted mb-4" id="wizard-progress-text">Starting import...</p>
+      <a href="/projects/{{ project.id }}/editor" class="text-sm text-primary hover:text-primary-hover no-underline">
+        Go to Editor
+      </a>
+    </div>
+  </div>
+
+  {# Preview modal — wider than standard modal for table content #}
+  <dialog id="preview-modal" role="dialog" aria-modal="true" aria-labelledby="preview-modal-title"
+    class="fixed inset-0 z-50 m-auto w-full max-w-3xl bg-surface-card border border-border rounded-lg shadow-xl p-0 backdrop:bg-black/50"
+    onclick="if(event.target===this)this.close()">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-border">
+      <h2 id="preview-modal-title" class="text-lg font-semibold text-text-primary m-0">Preview Changes</h2>
+      <button type="button" aria-label="Close"
+        class="text-text-muted hover:text-text-primary bg-transparent border-0 text-lg cursor-pointer p-1"
+        onclick="this.closest('dialog').close()"><svg class="w-5 h-5" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <div class="px-5 py-4">
+      <div id="preview-content" class="max-h-[60vh] overflow-y-auto">
+        <p class="text-sm text-text-muted text-center py-4">Loading preview...</p>
+      </div>
+    </div>
+  </dialog>
+</div>
+
+<script nonce="{{ nonce }}">
+(function() {
+  var dropZone = document.getElementById('drop-zone');
+  var fileInput = document.getElementById('file-input');
+  var fileInfo = document.getElementById('file-info');
+  var fileName = document.getElementById('file-name');
+  var fileSize = document.getElementById('file-size');
+  var fileClear = document.getElementById('file-clear');
+  var uploadBtn = document.getElementById('upload-btn');
+  var uploadForm = document.getElementById('upload-form');
+
+  // Click on drop zone opens file picker
+  dropZone.addEventListener('click', function() {
+    fileInput.click();
+  });
+
+  // Drag and drop handlers
+  dropZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.add('border-primary', 'bg-primary/5');
+    dropZone.classList.remove('border-border');
+  });
+
+  dropZone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.remove('border-primary', 'bg-primary/5');
+    dropZone.classList.add('border-border');
+  });
+
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.remove('border-primary', 'bg-primary/5');
+    dropZone.classList.add('border-border');
+
+    var files = e.dataTransfer.files;
+    if (files.length > 0) {
+      fileInput.files = files;
+      showFileInfo(files[0]);
+    }
+  });
+
+  // File input change
+  fileInput.addEventListener('change', function() {
+    if (fileInput.files.length > 0) {
+      showFileInfo(fileInput.files[0]);
+    }
+  });
+
+  // Clear file
+  fileClear.addEventListener('click', function(e) {
+    e.stopPropagation();
+    fileInput.value = '';
+    fileInfo.classList.add('hidden');
+    dropZone.classList.remove('hidden');
+    uploadBtn.disabled = true;
+  });
+
+  function showFileInfo(file) {
+    fileName.textContent = file.name;
+    var sizeKB = (file.size / 1024).toFixed(1);
+    var sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    fileSize.textContent = file.size > 1024 * 1024 ? sizeMB + ' MB' : sizeKB + ' KB';
+    fileInfo.classList.remove('hidden');
+    dropZone.classList.add('hidden');
+    uploadBtn.disabled = false;
+  }
+
+  function formatSize(bytes) {
+    if (bytes > 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    return (bytes / 1024).toFixed(1) + ' KB';
+  }
+
+  // Show loading state on submit
+  uploadForm.addEventListener('submit', function() {
+    var btnText = document.getElementById('upload-btn-text');
+    var btnLoading = document.getElementById('upload-btn-loading');
+    btnText.classList.add('hidden');
+    btnLoading.classList.remove('hidden');
+    uploadBtn.disabled = true;
+  });
+
+  // When HTMX response arrives in step-detect, transition to step 2
+  document.body.addEventListener('htmx:afterSwap', function(e) {
+    if (e.detail.target.id === 'step-detect') {
+      var detectContent = document.getElementById('step-detect');
+      if (detectContent && detectContent.innerHTML.trim()) {
+        // Show detect step, hide upload step
+        document.getElementById('step-upload').classList.add('hidden');
+
+        // Update step indicator
+        updateStepIndicator(2);
+
+        // Reset upload button
+        var btnText = document.getElementById('upload-btn-text');
+        var btnLoading = document.getElementById('upload-btn-loading');
+        if (btnText) btnText.classList.remove('hidden');
+        if (btnLoading) btnLoading.classList.add('hidden');
+        if (uploadBtn) uploadBtn.disabled = false;
+      }
+    }
+
+    // Handle preview modal content loaded
+    if (e.detail.target.id === 'preview-content') {
+      var modal = document.getElementById('preview-modal');
+      if (modal && !modal.open) {
+        modal.showModal();
+      }
+    }
+  });
+
+  // Expose functions globally for use by partials
+  window.wizardGoBack = function() {
+    document.getElementById('step-upload').classList.remove('hidden');
+    document.getElementById('step-detect').innerHTML = '';
+    updateStepIndicator(1);
+
+    // Reset file input so user can re-upload
+    dropZone.classList.remove('hidden');
+    fileInfo.classList.add('hidden');
+    fileInput.value = '';
+    uploadBtn.disabled = true;
+  };
+
+  window.wizardShowComplete = function() {
+    document.getElementById('step-detect').classList.add('hidden');
+    document.getElementById('step-complete').classList.remove('hidden');
+    updateStepIndicator(3);
+
+    // Animate progress bar
+    var bar = document.getElementById('wizard-progress-bar');
+    var text = document.getElementById('wizard-progress-text');
+    var progress = 0;
+    var interval = setInterval(function() {
+      if (progress < 60) progress += 3;
+      else if (progress < 85) progress += 0.5;
+      else if (progress < 95) progress += 0.1;
+      bar.style.width = progress + '%';
+      if (progress > 30) text.textContent = 'Processing translations...';
+      if (progress > 70) text.textContent = 'Almost done...';
+    }, 100);
+  };
+
+  window.openPreviewModal = function() {
+    var modal = document.getElementById('preview-modal');
+    if (modal) modal.showModal();
+  };
+
+  function updateStepIndicator(step) {
+    for (var i = 1; i <= 3; i++) {
+      var ind = document.getElementById('step-ind-' + i);
+      var circle = ind.querySelector('span');
+      if (i < step) {
+        // Completed
+        ind.className = 'flex items-center gap-1.5 text-sm font-medium text-green-400';
+        circle.className = 'w-6 h-6 rounded-full bg-green-400 text-white text-xs flex items-center justify-center font-bold';
+        circle.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>';
+      } else if (i === step) {
+        // Active
+        ind.className = 'flex items-center gap-1.5 text-sm font-medium text-primary';
+        circle.className = 'w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center font-bold';
+        circle.textContent = i;
+      } else {
+        // Upcoming
+        ind.className = 'flex items-center gap-1.5 text-sm font-medium text-text-muted';
+        circle.className = 'w-6 h-6 rounded-full bg-surface-card border border-border text-text-muted text-xs flex items-center justify-center font-bold';
+        circle.textContent = i;
+      }
+    }
+  }
+})();
+</script>
+{% endblock %}

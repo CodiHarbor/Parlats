@@ -1,0 +1,244 @@
+{% extends "base-public.njk" %}
+
+{% block body %}
+<nav class="sticky top-0 z-50 bg-surface/95 backdrop-blur border-b border-border">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+    <a href="/" class="flex items-center gap-2 text-lg font-bold text-text-primary no-underline">
+      <img src="/public/favicon.svg" alt="" style="width:1.25rem;height:1.25rem" class="w-5 h-5 rounded">
+      Parlats
+    </a>
+    <a href="/login" class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded text-sm font-medium no-underline">
+      Sign In
+    </a>
+  </div>
+</nav>
+
+<main class="max-w-2xl mx-auto px-4 sm:px-6 py-16">
+  <article class="space-y-4 text-text-secondary leading-relaxed">
+    <h1 class="text-3xl font-bold mb-2 text-text-primary">Terms of Service</h1>
+    <p class="text-text-muted text-sm mb-10">Last updated: March 20, 2026</p>
+
+    <p>These Terms of Service ("Terms") govern your use of Parlats ("the Service"), operated by CodiHarbor ("we," "us," or "our"), a company registered in Croatia.</p>
+    <p>By creating an account or using the Service, you agree to these Terms. If you do not agree, do not use the Service.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">1. The Service</h2>
+    <p>Parlats is a translation management platform that lets teams manage, edit, import, export, and collaborate on software translations. It is available as:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Self-hosted</strong> — You run Parlats on your own infrastructure under the AGPL-3.0 license</li>
+      <li><strong>Cloud (SaaS)</strong> — We host Parlats for you at parlats.com</li>
+    </ul>
+    <p>These Terms apply to the Cloud (SaaS) version. The self-hosted version is governed solely by the AGPL-3.0 license. If you self-host Parlats, you do so entirely at your own risk. CodiHarbor provides no support, no warranty, no service-level agreement, and accepts no liability whatsoever for self-hosted deployments. You are solely responsible for your own infrastructure, data, backups, security, and compliance.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">2. Accounts</h2>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">2.1 Eligibility</h3>
+    <p>You must be at least 16 years old to use the Service. By creating an account, you represent that you meet this age requirement.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">2.2 Account Security</h3>
+    <p>You are responsible for maintaining the security of your account credentials. You must:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Use a strong, unique password</li>
+      <li>Not share your account with others</li>
+      <li>Notify us immediately if you suspect unauthorized access</li>
+    </ul>
+    <p class="mt-2">We are not liable for any loss resulting from unauthorized use of your account.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">2.3 Account Deletion</h3>
+    <p>You may delete your account at any time from your account settings. See our <a href="/privacy" class="text-primary hover:underline">Privacy Policy</a> for details on what data is deleted and retained.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">3. Your Content</h2>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">3.1 Ownership</h3>
+    <p>You retain all rights to the content you upload, create, or manage through the Service, including translation keys, values, comments, and project data ("Your Content").</p>
+    <p><strong>We do not claim ownership of Your Content.</strong></p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">3.2 License to Us</h3>
+    <p>By using the Service, you grant us a limited license to store, process, display, and transmit Your Content solely for the purpose of providing the Service to you. This license ends when you delete Your Content or your account.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">3.3 Your Responsibilities</h3>
+    <p>You are responsible for Your Content. You must not upload content that:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Infringes on intellectual property rights of others</li>
+      <li>Is illegal under applicable law</li>
+      <li>Contains malware or malicious code</li>
+      <li>Is designed to disrupt or abuse the Service</li>
+    </ul>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">3.4 Backups and Data Integrity</h3>
+    <p>You are solely responsible for maintaining your own backups of Your Content. While we take reasonable measures to protect data stored on the Service, we do not guarantee that Your Content will not be lost, corrupted, or otherwise made unavailable. We strongly recommend that you regularly export and back up your translation data. We are not responsible for any loss of or damage to Your Content for any reason.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">4. Acceptable Use</h2>
+    <p>You agree not to:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Use the Service for any unlawful purpose</li>
+      <li>Attempt to gain unauthorized access to any part of the Service</li>
+      <li>Interfere with or disrupt the Service or its infrastructure</li>
+      <li>Reverse engineer, decompile, or disassemble any part of the Service (except as permitted by the AGPL-3.0 license for the open-source components)</li>
+      <li>Use the Service to send spam or unsolicited communications</li>
+      <li>Create multiple accounts to circumvent rate limits or restrictions</li>
+      <li>Scrape or extract data from the Service by automated means, except through our published API</li>
+      <li>Impersonate another person or entity</li>
+    </ul>
+    <p class="mt-2">We may suspend or terminate your account if you violate these Terms.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">5. API Usage</h2>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">5.1 API Keys</h3>
+    <p>You may access the Service programmatically through our API using API keys. API keys are subject to rate limits. You must keep your API keys confidential.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">5.2 Rate Limits</h3>
+    <p>We enforce rate limits on API usage. If you exceed these limits, requests may be temporarily rejected. Do not attempt to circumvent rate limits.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">6. Organizations and Teams</h2>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">6.1 Organization Owners</h3>
+    <p>The person who creates an organization is its initial owner. Owners can invite members, assign roles, and manage settings.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">6.2 Member Access</h3>
+    <p>Organization owners and admins control who has access to the organization and its projects. We are not responsible for actions taken by members you invite.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">6.3 Removing Members</h3>
+    <p>Organization owners and admins can remove members at any time. Removed members lose access to all organization data immediately.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">7. Service Availability</h2>
+    <p>We strive to keep the Service available, but we do not guarantee uninterrupted or error-free operation. The Service is provided "as is" with no uptime guarantees or service-level agreement of any kind.</p>
+    <p>We may, at our sole discretion and without liability:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Perform maintenance that temporarily affects availability</li>
+      <li>Modify, suspend, or discontinue any feature or the entire Service, with or without notice</li>
+      <li>Rate-limit or restrict access to prevent abuse</li>
+      <li>Shut down the Service entirely at any time</li>
+    </ul>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">8. Payment, Pricing, and Refunds</h2>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">8.1 Free and Paid Plans</h3>
+    <p>The Service may offer free and paid plans. Details are available on our pricing page.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">8.2 Changes to Pricing</h3>
+    <p>We may change pricing with 30 days' notice. Price changes do not affect your current billing period.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">8.3 Refund Policy</h3>
+    <p>All payments are non-refundable except as described below. If you cancel your subscription, you will retain access to the paid features until the end of your current billing period, but no refund will be issued for the remaining time.</p>
+    <p>Refunds may be issued at our sole discretion only for the most recent billing period (up to one month). Under no circumstances will refunds be issued for any period beyond the most recent billing cycle. By subscribing, you acknowledge and agree to this refund policy.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">8.4 No Credits or Pro-Rata Refunds</h3>
+    <p>We do not provide credits, pro-rata refunds, or refunds for partial months of service. If the Service is unavailable for any period of time, you are not entitled to any refund, credit, or compensation.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">9. Intellectual Property</h2>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">9.1 Our IP</h3>
+    <p>The Service, including its design, trademarks, and documentation, is owned by CodiHarbor and protected by intellectual property laws. The open-source components are licensed under AGPL-3.0.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">9.2 Feedback</h3>
+    <p>If you provide feedback or suggestions about the Service, we may use them without restriction or compensation.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">10. Content Takedown</h2>
+    <p>If you believe content on the Service infringes your intellectual property rights, contact us at <a href="mailto:privacy@parlats.com" class="text-primary hover:underline">privacy@parlats.com</a> with:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>A description of the copyrighted work</li>
+      <li>The location of the infringing content</li>
+      <li>Your contact information</li>
+      <li>A statement of good faith belief that the use is unauthorized</li>
+    </ul>
+    <p class="mt-2">We will investigate and take appropriate action.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">11. Disclaimer of Warranties</h2>
+    <p class="uppercase font-semibold">The Service is provided "as is" and "as available," without warranty of any kind, express or implied. To the maximum extent permitted by applicable law, CodiHarbor expressly disclaims all warranties, including but not limited to:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Merchantability</strong> — We do not warrant that the Service is fit for commercial use or meets commercial standards</li>
+      <li><strong>Fitness for a particular purpose</strong> — We do not warrant that the Service is suitable for your specific needs or use case</li>
+      <li><strong>Non-infringement</strong> — We do not warrant that the Service does not infringe third-party intellectual property rights</li>
+      <li><strong>Accuracy or reliability</strong> — We do not warrant that any data, translations, or content processed by the Service is accurate, complete, reliable, or error-free</li>
+      <li><strong>Availability</strong> — We do not warrant uninterrupted, timely, or secure access to the Service</li>
+      <li><strong>Data preservation</strong> — We do not warrant that Your Content will be preserved, backed up, or recoverable</li>
+      <li><strong>Compatibility</strong> — We do not warrant that the Service will be compatible with your systems, browsers, or workflows</li>
+      <li><strong>Security</strong> — We do not warrant that the Service is free from vulnerabilities, viruses, or other harmful components</li>
+    </ul>
+    <p class="mt-3">You use the Service entirely at your own risk. Any reliance on the Service or content obtained through it is at your sole risk.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">12. Limitation of Liability</h2>
+    <p class="uppercase font-semibold">To the maximum extent permitted by applicable law:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>CodiHarbor, its owners, employees, agents, and affiliates shall not be liable for any indirect, incidental, special, consequential, exemplary, or punitive damages of any kind, regardless of the cause of action or theory of liability, even if we have been advised of the possibility of such damages</li>
+      <li>This includes, without limitation, damages for loss of profits, revenue, data, goodwill, business opportunities, or any other intangible losses</li>
+      <li>Our total aggregate liability to you for all claims arising from or related to the Service or these Terms is limited to the lesser of: (a) the amount you actually paid us in the 12 months preceding the claim, or (b) EUR 50</li>
+      <li>If you are using the Service on a free plan, our maximum liability to you is EUR 0 (zero)</li>
+      <li>We are not liable for any loss of data, corruption of data, unauthorized access to your data, or any consequences thereof</li>
+      <li>We are not liable for the accuracy, quality, or fitness of any translations or content managed through the Service</li>
+      <li>We are not liable for any decisions you make based on data or output from the Service</li>
+    </ul>
+    <p class="mt-3">Nothing in these Terms excludes liability that cannot be excluded under applicable law, including liability for fraud or willful misconduct.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">13. Indemnification</h2>
+    <p>You agree to indemnify, defend, and hold harmless CodiHarbor, its owners, employees, agents, and affiliates from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable legal fees) arising from or related to:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Your use of the Service</li>
+      <li>Your Content</li>
+      <li>Your violation of these Terms</li>
+      <li>Your violation of any applicable law or regulation</li>
+      <li>Any dispute between you and a third party relating to the Service</li>
+      <li>Any claim that Your Content infringes or violates the rights of a third party</li>
+    </ul>
+    <p class="mt-2">This indemnification obligation survives the termination of these Terms and your use of the Service.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">14. Third-Party Services</h2>
+    <p>The Service integrates with or relies on third-party services, including but not limited to payment processors (Stripe), email providers (Resend), authentication providers (Google), and analytics services (PostHog). We are not responsible or liable for:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>The availability, accuracy, or reliability of any third-party service</li>
+      <li>Any loss or damage caused by a third-party service's failure, outage, or error</li>
+      <li>Any changes to third-party services that affect the functionality of the Service</li>
+      <li>The privacy practices or terms of any third-party service</li>
+    </ul>
+    <p class="mt-2">Your use of third-party services through the Service is subject to those services' own terms and policies.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">15. Force Majeure</h2>
+    <p>We are not liable for any failure or delay in performing our obligations under these Terms if such failure or delay results from circumstances beyond our reasonable control, including but not limited to: natural disasters, war, terrorism, pandemic, government action, power failure, internet or telecommunications failure, cyberattacks, third-party service outages, or any other event outside our reasonable control.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">16. Termination</h2>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">16.1 By You</h3>
+    <p>You may stop using the Service and delete your account at any time.</p>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">16.2 By Us</h3>
+    <p>We may suspend or terminate your account at our sole discretion if you:</p>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Violate these Terms</li>
+      <li>Use the Service in a way that could harm us or other users</li>
+      <li>Fail to pay for a paid plan</li>
+      <li>For any other reason, with or without cause, upon reasonable notice</li>
+    </ul>
+
+    <h3 class="text-lg font-medium !mt-6 mb-3 text-text-primary">16.3 Effect of Termination</h3>
+    <p>On termination, your right to use the Service ends immediately. We may delete your data after a reasonable retention period (typically 30 days), unless we are required to keep it by law. No refund is owed upon termination. Sections 3.4, 11, 12, 13, 14, 15, 17, and 18 survive termination.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">17. Governing Law and Disputes</h2>
+    <p>These Terms are governed by the laws of the Republic of Croatia.</p>
+    <p>Any disputes will be resolved by the competent courts in Croatia. If you are an EU consumer, you retain any mandatory consumer protection rights under the law of your country of residence.</p>
+    <p>For EU consumers: You may also use the European Commission's Online Dispute Resolution platform at <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener" class="text-primary hover:underline">https://ec.europa.eu/consumers/odr</a>.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">18. Class Action Waiver</h2>
+    <p>To the extent permitted by applicable law, you agree that any dispute resolution proceedings will be conducted only on an individual basis and not in a class, consolidated, or representative action. You waive any right to participate in a class action lawsuit or class-wide arbitration against CodiHarbor.</p>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">19. General</h2>
+    <ul class="list-disc pl-6 space-y-1">
+      <li><strong>Entire agreement:</strong> These Terms, together with our Privacy Policy, constitute the entire agreement between you and CodiHarbor regarding the Service.</li>
+      <li><strong>Severability:</strong> If any provision is found unenforceable, the remaining provisions remain in effect.</li>
+      <li><strong>No waiver:</strong> Our failure to enforce a provision does not waive our right to enforce it later.</li>
+      <li><strong>Assignment:</strong> We may assign these Terms in connection with a merger, acquisition, or sale of assets. You may not assign your rights under these Terms.</li>
+    </ul>
+
+    <h2 class="text-xl font-semibold !mt-10 mb-4 text-text-primary">20. Contact</h2>
+    <p>For questions about these Terms:</p>
+    <p><strong>CodiHarbor</strong><br>Email: <a href="mailto:privacy@parlats.com" class="text-primary hover:underline">privacy@parlats.com</a></p>
+  </article>
+</main>
+
+<footer class="border-t border-border py-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="border-t border-border pt-6 text-center text-sm text-text-muted">
+      &copy; {{ year or "2026" }} CodiHarbor. <a href="/" class="text-text-secondary hover:text-text-primary no-underline">Parlats</a> — Open-source translation management.
+    </div>
+  </div>
+</footer>
+{% endblock %}

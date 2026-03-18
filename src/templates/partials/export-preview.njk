@@ -1,0 +1,93 @@
+{# Export preview — paginated table showing what will be exported #}
+{% if error %}
+<div class="p-4 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+  {{ error }}
+</div>
+{% elif rows.length == 0 %}
+<div class="p-4 text-text-muted text-sm text-center">
+  No translations to export.
+</div>
+{% else %}
+
+<div class="mb-3 text-xs text-text-muted">
+  Showing {{ rows.length }} of {{ totalRows }} row{{ "s" if totalRows != 1 }}
+  {% if totalPages > 1 %} (page {{ page }} of {{ totalPages }}){% endif %}
+</div>
+
+<div class="overflow-x-auto max-h-[50vh] border border-border rounded-lg">
+  <table class="w-full text-sm">
+    <thead class="sticky top-0 z-10 bg-surface-card">
+      <tr class="border-b border-border text-left text-text-muted">
+        {% for col in columns %}
+        <th scope="col" class="px-3 py-2 font-medium whitespace-nowrap {% if loop.first %}sticky left-0 bg-surface-card z-20{% endif %}">{{ col }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-border">
+      {% for row in rows %}
+      <tr class="hover:bg-surface-hover/50">
+        {% for col in columns %}
+        <td class="px-3 py-2 {% if loop.first %}font-mono text-xs text-text-primary sticky left-0 bg-surface-card z-10 max-w-[200px] truncate{% else %}text-text-secondary max-w-[250px] truncate{% endif %}">
+          {% if row[col] is defined and row[col] !== null and row[col] !== "" %}
+            {{ row[col] }}
+          {% else %}
+            {% if not loop.first %}<span class="text-xs text-danger/60 italic">missing</span>{% endif %}
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{# Pagination #}
+{% if totalPages > 1 %}
+<nav class="flex items-center justify-between mt-3">
+  <div class="flex gap-1">
+    {% if page > 1 %}
+    <button type="button"
+            class="px-3 py-1 text-xs rounded bg-surface-card border border-border text-text-secondary hover:bg-surface-hover cursor-pointer"
+            hx-post="/projects/{{ projectId }}/export/preview?page={{ page - 1 }}"
+            hx-target="#preview-content"
+            hx-swap="innerHTML"
+            hx-include="#export-form">
+      Prev
+    </button>
+    {% else %}
+    <span class="px-3 py-1 text-xs rounded bg-surface border border-border text-text-muted/30">Prev</span>
+    {% endif %}
+
+    {% for p in range(1, totalPages + 1) %}
+      {% if p <= 3 or p > totalPages - 2 or (p >= page - 1 and p <= page + 1) %}
+      <button type="button"
+              class="px-3 py-1 text-xs rounded border cursor-pointer
+                     {% if p == page %}bg-primary text-white border-primary font-semibold{% else %}bg-surface-card border-border text-text-secondary hover:bg-surface-hover{% endif %}"
+              hx-post="/projects/{{ projectId }}/export/preview?page={{ p }}"
+              hx-target="#preview-content"
+              hx-swap="innerHTML"
+              hx-include="#export-form">
+        {{ p }}
+      </button>
+      {% elif p == 4 or p == totalPages - 2 %}
+      <span class="px-1 py-1 text-xs text-text-muted">...</span>
+      {% endif %}
+    {% endfor %}
+
+    {% if page < totalPages %}
+    <button type="button"
+            class="px-3 py-1 text-xs rounded bg-surface-card border border-border text-text-secondary hover:bg-surface-hover cursor-pointer"
+            hx-post="/projects/{{ projectId }}/export/preview?page={{ page + 1 }}"
+            hx-target="#preview-content"
+            hx-swap="innerHTML"
+            hx-include="#export-form">
+      Next
+    </button>
+    {% else %}
+    <span class="px-3 py-1 text-xs rounded bg-surface border border-border text-text-muted/30">Next</span>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}
+
+{% endif %}

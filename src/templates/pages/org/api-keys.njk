@@ -1,0 +1,114 @@
+{% extends "base.njk" %}
+{% from "macros/ui.njk" import modal %}
+
+{% block title %}API Keys — {{ ctx.org.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-text-primary">{{ t("api.keys_title") }}</h1>
+      <p class="text-sm text-text-secondary mt-1">{{ t("api.keys_subtitle") }}</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="/org/api-docs" class="px-3 py-2 text-sm text-text-secondary border border-border rounded-lg hover:bg-surface-hover no-underline">
+        {{ t("api.docs_link") }}
+      </a>
+      <button
+        type="button"
+        onclick="document.getElementById('create-key-modal').showModal()"
+        class="px-4 py-2 text-sm bg-primary hover:bg-primary-hover text-white rounded-lg border-0 cursor-pointer"
+      >{{ t("api.create_key") }}</button>
+    </div>
+  </div>
+
+  {% if keys.length === 0 %}
+    <div class="text-center py-12 border border-border rounded-lg bg-surface-card">
+      <div class="text-text-secondary mb-2">{{ t("api.no_keys_title") }}</div>
+      <p class="text-sm text-text-secondary">{{ t("api.no_keys_message") }}</p>
+    </div>
+  {% else %}
+    <div class="border border-border rounded-lg overflow-x-auto bg-surface-card">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-border bg-surface-bg">
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase">{{ t("api.table_name") }}</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase">{{ t("api.table_key") }}</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase">{{ t("api.table_created_by") }}</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase">{{ t("api.table_last_used") }}</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-text-secondary uppercase">{{ t("api.table_status") }}</th>
+            <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-text-secondary uppercase">{{ t("api.table_actions") }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          {% for key in keys %}
+            {% include "partials/api-key-row.njk" %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+{% call modal("create-key-modal", t("api.create_key")) %}
+  <form hx-post="/org/api-keys" hx-target="#create-key-result" hx-swap="innerHTML" class="p-5 space-y-4">
+    <div>
+      <label for="key-name" class="block text-sm font-medium text-text-primary mb-1">{{ t("api.create_key_name_label") }}</label>
+      <input type="text" id="key-name" name="name" required maxlength="255" placeholder="{{ t("api.create_key_name_placeholder") }}"
+        class="w-full px-3 py-2 bg-surface-bg border border-border rounded-lg text-text-primary text-sm focus:ring-1 focus:ring-primary focus:border-primary">
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-text-primary mb-2">{{ t("api.create_key_permissions_label") }}</label>
+      <div class="grid grid-cols-2 gap-2">
+        <label class="flex items-center gap-2 text-sm text-text-secondary">
+          <input type="checkbox" name="perm_read" checked class="rounded border-border bg-surface-bg text-primary"> {{ t("api.create_key_perm_read") }}
+        </label>
+        <label class="flex items-center gap-2 text-sm text-text-secondary">
+          <input type="checkbox" name="perm_write" class="rounded border-border bg-surface-bg text-primary"> {{ t("api.create_key_perm_write") }}
+        </label>
+        <label class="flex items-center gap-2 text-sm text-text-secondary">
+          <input type="checkbox" name="perm_import" class="rounded border-border bg-surface-bg text-primary"> {{ t("api.create_key_perm_import") }}
+        </label>
+        <label class="flex items-center gap-2 text-sm text-text-secondary">
+          <input type="checkbox" name="perm_export" class="rounded border-border bg-surface-bg text-primary"> {{ t("api.create_key_perm_export") }}
+        </label>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-text-primary mb-2">{{ t("api.create_key_scope_label") }}</label>
+      <div class="space-y-2">
+        <label class="flex items-center gap-2 text-sm text-text-secondary">
+          <input type="radio" name="project_scope" value="all" checked class="border-border bg-surface-bg text-primary"> {{ t("api.create_key_scope_all") }}
+        </label>
+        <label class="flex items-center gap-2 text-sm text-text-secondary">
+          <input type="radio" name="project_scope" value="specific" class="border-border bg-surface-bg text-primary"
+            onclick="document.getElementById('project-select').classList.toggle('hidden', !this.checked)"> {{ t("api.create_key_scope_specific") }}
+        </label>
+      </div>
+      <div id="project-select" class="hidden mt-2 space-y-1 max-h-32 overflow-y-auto">
+        {% for project in projects %}
+          <label class="flex items-center gap-2 text-sm text-text-secondary">
+            <input type="checkbox" name="projects" value="{{ project.id }}" class="rounded border-border bg-surface-bg text-primary">
+            {{ project.name }}
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div>
+      <label for="expires-at" class="block text-sm font-medium text-text-primary mb-1">{{ t("api.create_key_expiry_label") }}</label>
+      <input type="date" id="expires-at" name="expires_at"
+        class="w-full px-3 py-2 bg-surface-bg border border-border rounded-lg text-text-primary text-sm focus:ring-1 focus:ring-primary focus:border-primary">
+    </div>
+
+    <div class="flex justify-end pt-2">
+      <button type="submit" class="px-4 py-2 text-sm bg-primary hover:bg-primary-hover text-white rounded-lg border-0 cursor-pointer">
+        {{ t("api.create_key_submit") }}
+      </button>
+    </div>
+  </form>
+  <div id="create-key-result"></div>
+{% endcall %}
+{% endblock %}

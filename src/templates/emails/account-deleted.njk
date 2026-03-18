@@ -1,0 +1,25 @@
+{# emails/account-deleted.njk — account deletion confirmation #}
+{% extends "emails/layout.njk" %}
+
+{% block title %}Account deleted — Parlats{% endblock %}
+
+{% block content %}
+<h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#1a1a2e;">Account deleted</h1>
+<p style="margin:0 0 24px;font-size:15px;color:#6b7280;line-height:1.5;">
+  Hi {{ name }}, your Parlats account has been permanently deleted. All your personal data has been removed from our systems.
+</p>
+
+<p style="margin:0 0 8px;font-size:15px;color:#6b7280;line-height:1.5;">
+  What was deleted:
+</p>
+<ul style="margin:0 0 24px;padding-left:20px;font-size:14px;color:#6b7280;line-height:1.8;">
+  <li>Your profile and login credentials</li>
+  <li>All active sessions</li>
+  <li>Organization memberships</li>
+  <li>Notifications and email preferences</li>
+</ul>
+
+<p style="margin:0 0 4px;font-size:13px;color:#9ca3af;line-height:1.5;">
+  Audit history entries have been anonymized. If you have questions, contact us at privacy@parlats.com.
+</p>
+{% endblock %}

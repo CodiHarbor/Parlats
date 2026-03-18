@@ -1,0 +1,74 @@
+{# emails/digest.njk — notification digest #}
+{% extends "emails/layout.njk" %}
+
+{% block title %}Parlats Notifications{% endblock %}
+
+{% block content %}
+<h1 style="margin:0 0 4px;font-size:22px;font-weight:700;color:#1a1a2e;">New notifications</h1>
+<p style="margin:0 0 20px;font-size:15px;color:#6b7280;line-height:1.5;">
+  Hi {{ userName }}, here's what's happening in <strong style="color:#6366f1;">{{ orgName }}</strong>:
+</p>
+
+<p style="margin:0 0 20px;font-size:14px;color:#6b7280;">
+  You have <strong style="color:#1a1a2e;">{{ totalCount }}</strong> unread notification{{ "s" if totalCount != 1 }}.
+</p>
+
+{% if grouped.comment_added %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+  <tr>
+    <td style="padding-bottom:8px;border-bottom:2px solid #e5e7eb;">
+      <span style="font-size:14px;font-weight:700;color:#1a1a2e;text-transform:uppercase;letter-spacing:0.5px;">Comments</span>
+    </td>
+  </tr>
+  {% for n in grouped.comment_added %}
+  <tr>
+    <td style="padding:10px 0;{% if not loop.last %}border-bottom:1px solid #f3f4f6;{% endif %}">
+      <strong style="font-size:14px;color:#1a1a2e;">{{ n.title }}</strong><br>
+      <span style="font-size:13px;color:#6b7280;">{{ n.body }}</span>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+{% if grouped.translation_overwritten %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+  <tr>
+    <td style="padding-bottom:8px;border-bottom:2px solid #e5e7eb;">
+      <span style="font-size:14px;font-weight:700;color:#1a1a2e;text-transform:uppercase;letter-spacing:0.5px;">Translation Updates</span>
+    </td>
+  </tr>
+  {% for n in grouped.translation_overwritten %}
+  <tr>
+    <td style="padding:10px 0;{% if not loop.last %}border-bottom:1px solid #f3f4f6;{% endif %}">
+      <strong style="font-size:14px;color:#1a1a2e;">{{ n.title }}</strong><br>
+      <span style="font-size:13px;color:#6b7280;">{{ n.body }}</span>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+{% if grouped.untranslated_threshold %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+  <tr>
+    <td style="padding-bottom:8px;border-bottom:2px solid #e5e7eb;">
+      <span style="font-size:14px;font-weight:700;color:#1a1a2e;text-transform:uppercase;letter-spacing:0.5px;">Translation Needed</span>
+    </td>
+  </tr>
+  {% for n in grouped.untranslated_threshold %}
+  <tr>
+    <td style="padding:10px 0;{% if not loop.last %}border-bottom:1px solid #f3f4f6;{% endif %}">
+      <strong style="font-size:14px;color:#1a1a2e;">{{ n.title }}</strong><br>
+      <span style="font-size:13px;color:#6b7280;">{{ n.body }}</span>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+Sent by <span style="color:#6366f1;font-weight:600;">Parlats</span> &mdash;
+<a href="{{ unsubscribeUrl }}" style="color:#6b7280;text-decoration:underline;">Unsubscribe</a> from digest emails.
+{% endblock %}

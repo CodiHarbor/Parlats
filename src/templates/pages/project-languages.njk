@@ -1,0 +1,97 @@
+{% extends "base.njk" %}
+
+{% from "macros/ui.njk" import breadcrumbs %}
+
+{% block title %}Languages — {{ project.name }} — Parlats{% endblock %}
+
+{% block content %}
+{{ breadcrumbs([
+  { label: t("nav.projects"), url: "/projects" },
+  { label: project.name, url: "/projects/" + project.id },
+  { label: t("projects.detail_languages") }
+]) }}
+
+<div class="mb-6">
+  <h1 class="text-2xl font-bold mb-1">{{ t("projects.languages_title") }}</h1>
+  <p class="text-text-muted text-sm">{{ t("projects.languages_subtitle", { name: project.name }) }}</p>
+</div>
+
+{# Add language form #}
+<form method="post" action="/projects/{{ project.id }}/languages" class="flex gap-2 mb-6 max-w-md">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+  <input type="text" name="language_code" required
+    list="language-suggestions"
+    placeholder="{{ t("projects.languages_placeholder") }}"
+    class="flex-1 bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary">
+  <datalist id="language-suggestions">
+    <option value="en">
+    <option value="es">
+    <option value="fr">
+    <option value="de">
+    <option value="pt">
+    <option value="pt-BR">
+    <option value="it">
+    <option value="nl">
+    <option value="ja">
+    <option value="zh">
+    <option value="zh-TW">
+    <option value="ko">
+    <option value="ar">
+    <option value="ru">
+    <option value="pl">
+    <option value="tr">
+    <option value="sv">
+    <option value="da">
+    <option value="fi">
+    <option value="nb">
+    <option value="he">
+    <option value="th">
+    <option value="vi">
+    <option value="uk">
+    <option value="cs">
+    <option value="hu">
+    <option value="ro">
+    <option value="hi">
+  </datalist>
+  <button type="submit"
+    class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded font-medium text-sm cursor-pointer">{{ t("projects.languages_add") }}</button>
+</form>
+
+{# Language list #}
+{% if languages.length > 0 %}
+<div class="overflow-x-auto rounded-lg border border-border">
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="border-b border-border bg-surface-card">
+        <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">{{ t("projects.languages_table_code") }}</th>
+        <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">{{ t("projects.languages_table_label") }}</th>
+        <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for lang in languages %}
+      <tr class="border-b border-border last:border-0">
+        <td class="px-4 py-3"><code class="text-xs bg-surface px-1.5 py-0.5 rounded text-text-secondary">{{ lang.language_code }}</code></td>
+        <td class="px-4 py-3 text-text-secondary">{{ lang.label }}</td>
+        <td class="px-4 py-3">
+          {% if lang.language_code != project.default_language %}
+          <form method="post" action="/projects/{{ project.id }}/languages/{{ lang.language_code }}/delete"
+            class="m-0"
+            data-confirm="Remove {{ lang.label }}? Its translations will be deleted.">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <button type="submit"
+              class="px-2 py-1 text-xs text-text-muted hover:text-danger bg-transparent border border-border hover:border-danger/50 rounded cursor-pointer">{{ t("common.remove") }}</button>
+          </form>
+          {% else %}
+          <span class="text-xs text-text-muted bg-surface px-1.5 py-0.5 rounded">{{ t("common.default") }}</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-text-muted text-sm">{{ t("projects.languages_no_languages") }}</p>
+{% endif %}
+{% endblock %}

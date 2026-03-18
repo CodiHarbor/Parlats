@@ -1,0 +1,32 @@
+<tr id="api-key-{{ key.id }}">
+  <td class="px-4 py-3 text-sm text-text-primary">{{ key.name }}</td>
+  <td class="px-4 py-3 text-sm font-mono text-text-secondary">trad_{{ key.key_prefix }}...</td>
+  <td class="px-4 py-3 text-sm text-text-secondary">{{ key.created_by_name or key.created_by_email or "—" }}</td>
+  <td class="px-4 py-3 text-sm text-text-secondary">
+    {% if key.last_used_at %}
+      {{ key.last_used_at | timeago }}
+    {% else %}
+      {{ t("common.never") }}
+    {% endif %}
+  </td>
+  <td class="px-4 py-3 text-sm">
+    {% if key.revoked_at %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-500/10 text-red-400">{{ t("common.revoked") }}</span>
+    {% elif key.expires_at and key.expires_at < now %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-500/10 text-yellow-400">{{ t("common.expired") }}</span>
+    {% else %}
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-500/10 text-green-400">{{ t("common.active") }}</span>
+    {% endif %}
+  </td>
+  <td class="px-4 py-3 text-sm text-right">
+    {% if not key.revoked_at %}
+      <button
+        hx-delete="/org/api-keys/{{ key.id }}"
+        hx-target="#api-key-{{ key.id }}"
+        hx-swap="outerHTML"
+        hx-confirm="Revoke API key '{{ key.name }}'? This cannot be undone."
+        class="text-red-400 hover:text-red-300 text-xs bg-transparent border-0 cursor-pointer"
+      >{{ t("common.revoke") }}</button>
+    {% endif %}
+  </td>
+</tr>

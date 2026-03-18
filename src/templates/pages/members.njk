@@ -1,0 +1,90 @@
+{% extends "base.njk" %}
+
+{% from "macros/ui.njk" import empty_state, modal %}
+
+{% block title %}Members — Parlats{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold mb-1">{{ t("members.title") }}</h1>
+    <p class="text-text-muted text-sm">{{ t("members.subtitle") }}</p>
+  </div>
+  {% if ctx.org.role == 'owner' or ctx.org.role == 'admin' %}
+  <button type="button"
+    class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded font-medium text-sm cursor-pointer border-0"
+    onclick="document.getElementById('invite-modal').showModal()">
+    {{ t("members.invite_member") }}
+  </button>
+  {% endif %}
+</div>
+
+{% if error %}
+<div class="mb-4 px-4 py-3 rounded bg-danger/10 border border-danger/20 text-danger text-sm">
+  {{ error }}
+</div>
+{% endif %}
+
+{# Members table #}
+<div class="overflow-x-auto rounded-lg border border-border mb-8" id="members-table-container">
+  {% include "partials/members-table.njk" %}
+</div>
+
+{# Pending invitations #}
+{% if invitations.length > 0 %}
+<div class="mt-8">
+  <h2 class="text-lg font-semibold mb-4">{{ t("members.pending_invitations") }}</h2>
+  <div class="overflow-x-auto rounded-lg border border-border" id="invitations-container">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-border bg-surface-card">
+          <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">{{ t("members.table_email") }}</th>
+          <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">{{ t("members.table_role") }}</th>
+          <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">{{ t("members.table_invited_by") }}</th>
+          <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">{{ t("members.table_expires") }}</th>
+          <th scope="col" class="text-right px-4 py-3 font-medium text-text-secondary">{{ t("members.table_actions") }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inv in invitations %}
+        {% include "partials/invitation-row.njk" %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{# Invite modal #}
+{% call modal("invite-modal", t("members.invite_title")) %}
+<form method="post" action="/org/invitations">
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+  <div class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-text-secondary mb-1" for="invite-email">{{ t("members.invite_email_label") }}</label>
+      <input type="email" id="invite-email" name="email" required
+        class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none"
+        placeholder="{{ t("members.invite_email_placeholder") }}">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-text-secondary mb-1" for="invite-role">{{ t("members.invite_role_label") }}</label>
+      <select id="invite-role" name="role"
+        class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none">
+        <option value="admin">{{ t("members.role_admin") }}</option>
+        <option value="dev" selected>{{ t("members.role_developer") }}</option>
+        <option value="translator">{{ t("members.role_translator") }}</option>
+      </select>
+    </div>
+    <div class="flex justify-end gap-3 pt-2">
+      <button type="button"
+        class="px-4 py-2 text-sm text-text-secondary hover:text-text-primary bg-transparent border border-border rounded cursor-pointer"
+        onclick="this.closest('dialog').close()">{{ t("common.cancel") }}</button>
+      <button type="submit"
+        class="px-4 py-2 text-sm text-white bg-primary hover:bg-primary-hover rounded font-medium cursor-pointer border-0">
+        {{ t("members.send_invitation") }}
+      </button>
+    </div>
+  </div>
+</form>
+{% endcall %}
+{% endblock %}

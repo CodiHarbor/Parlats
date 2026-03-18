@@ -1,0 +1,118 @@
+{% extends "base.njk" %}
+
+{% from "macros/ui.njk" import breadcrumbs %}
+{% from "macros/icons.njk" import icon %}
+
+{% block title %}{{ project.name }} — Parlats{% endblock %}
+
+{% block content %}
+{{ breadcrumbs([
+  { label: t("nav.projects"), url: "/projects" },
+  { label: project.name }
+]) }}
+
+<div class="mb-6">
+  <h1 class="text-2xl font-bold mb-1">{{ project.name }}</h1>
+  {% if project.description %}<p class="text-text-muted text-sm">{{ project.description }}</p>{% endif %}
+</div>
+
+<div class="flex gap-2 mb-6">
+  <a href="/projects/{{ project.id }}/editor"
+     class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded font-medium text-sm no-underline">{{ t("projects.detail_open_editor") }}</a>
+  <a href="/projects/{{ project.id }}/languages"
+     class="px-4 py-2 bg-surface-card border border-border hover:bg-surface-hover text-text-primary rounded font-medium text-sm no-underline">{{ t("projects.detail_languages") }}</a>
+  <a href="/projects/{{ project.id }}/edit"
+     class="px-4 py-2 bg-surface-card border border-border hover:bg-surface-hover text-text-primary rounded font-medium text-sm no-underline">{{ t("projects.detail_edit") }}</a>
+  <a href="/projects/{{ project.id }}/history"
+     class="px-4 py-2 bg-surface-card border border-border hover:bg-surface-hover text-text-primary rounded font-medium text-sm no-underline">{{ t("projects.detail_history") }}</a>
+  <form method="post" action="/projects/{{ project.id }}/delete" class="inline"
+    data-confirm="Delete project &quot;{{ project.name }}&quot;? This cannot be undone.">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <button type="submit"
+      class="px-4 py-2 bg-surface-card border border-danger/50 hover:bg-danger/10 text-danger rounded font-medium text-sm cursor-pointer">{{ t("projects.detail_delete") }}</button>
+  </form>
+</div>
+
+<div class="grid grid-cols-3 gap-4">
+  {# Languages card #}
+  <div class="bg-surface-card border border-border rounded-lg">
+    <div class="px-4 py-3 border-b border-border font-semibold text-sm">{{ t("projects.detail_card_languages") }}</div>
+    <div class="p-4">
+      {% if languages.length > 0 %}
+      <ul class="space-y-1 list-none p-0 m-0">
+        {% for lang in languages %}
+        <li class="text-sm text-text-secondary">
+          <code class="text-xs bg-surface px-1.5 py-0.5 rounded">{{ lang.language_code }}</code>
+          <span class="ml-1">{{ lang.label }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-sm text-text-muted">{{ t("projects.detail_no_languages") }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# Namespaces card #}
+  <div class="bg-surface-card border border-border rounded-lg">
+    <div class="px-4 py-3 border-b border-border font-semibold text-sm">{{ t("projects.detail_card_namespaces") }}</div>
+    <div class="p-4">
+      {% if namespaces.length > 0 %}
+      <ul class="space-y-1 list-none p-0 m-0">
+        {% for ns in namespaces %}
+        <li class="flex items-center gap-2 text-sm text-text-secondary">
+          <span>{{ ns.name }}</span>
+          <span class="text-xs text-text-muted">({{ ns.key_count }} {{ t("dashboard.keys") | lower }})</span>
+          {% if ns.id == project.default_namespace_id %}
+            <span class="text-xs text-primary bg-primary/10 px-1.5 py-0.5 rounded">{{ t("common.default") }}</span>
+          {% else %}
+            <form method="post" action="/projects/{{ project.id }}/namespaces/{{ ns.id }}/set-default"
+              class="inline m-0">
+              <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+              <button type="submit"
+                class="text-xs text-text-muted hover:text-primary bg-transparent border-0 cursor-pointer underline">{{ t("projects.set_default") }}</button>
+            </form>
+            <form method="post" action="/projects/{{ project.id }}/namespaces/{{ ns.id }}/delete"
+              class="inline m-0"
+              data-confirm="Delete namespace &quot;{{ ns.name }}&quot;?">
+              <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+              <button type="submit"
+                class="text-text-muted hover:text-danger text-xs cursor-pointer bg-transparent border-0 p-0">{{ icon("x", "w-3.5 h-3.5") }}</button>
+            </form>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-sm text-text-muted">{{ t("projects.detail_no_namespaces") }}</p>
+      {% endif %}
+      <form method="post" action="/projects/{{ project.id }}/namespaces" class="mt-3 flex gap-2">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <input type="text" name="name" placeholder="{{ t("projects.detail_namespace_placeholder") }}" required
+          class="flex-1 bg-surface border border-border rounded px-2 py-1 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary">
+        <button type="submit"
+          class="px-3 py-1 bg-primary hover:bg-primary-hover text-white rounded text-sm font-medium cursor-pointer">{{ t("common.add") }}</button>
+      </form>
+    </div>
+  </div>
+
+  {# Info card #}
+  <div class="bg-surface-card border border-border rounded-lg">
+    <div class="px-4 py-3 border-b border-border font-semibold text-sm">{{ t("projects.detail_card_info") }}</div>
+    <div class="p-4 space-y-2">
+      <div>
+        <div class="text-xs text-text-muted">{{ t("projects.detail_info_default_language") }}</div>
+        <code class="text-sm bg-surface px-1.5 py-0.5 rounded text-text-secondary">{{ project.default_language }}</code>
+      </div>
+      <div>
+        <div class="text-xs text-text-muted">{{ t("projects.detail_info_interpolation") }}</div>
+        <code class="text-sm bg-surface px-1.5 py-0.5 rounded text-text-secondary">{{ project.interpolation_format }}</code>
+      </div>
+      <div>
+        <div class="text-xs text-text-muted">{{ t("projects.detail_info_slug") }}</div>
+        <code class="text-sm bg-surface px-1.5 py-0.5 rounded text-text-secondary">{{ project.slug }}</code>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

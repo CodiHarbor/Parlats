@@ -1,0 +1,399 @@
+{% extends "base-public.njk" %}
+
+{% block body %}
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded">Skip to main content</a>
+{# ========== NAV BAR ========== #}
+<nav class="sticky top-0 z-50 bg-surface/95 backdrop-blur border-b border-border">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+    <a href="/" class="flex items-center gap-2 text-lg font-bold text-text-primary no-underline">
+      <img src="/public/favicon.svg" alt="" style="width:1.25rem;height:1.25rem" class="w-5 h-5 rounded">
+      Parlats
+    </a>
+    <div class="hidden sm:flex items-center gap-6 text-sm">
+      <a href="#features" class="text-text-secondary hover:text-text-primary no-underline">Features</a>
+      <a href="#cli" class="text-text-secondary hover:text-text-primary no-underline">CLI</a>
+      <a href="https://github.com/CodiHarbor/Parlats" target="_blank" rel="noopener" class="text-text-secondary hover:text-text-primary no-underline">GitHub</a>
+      <a href="/pricing" class="text-text-secondary hover:text-text-primary no-underline">Pricing</a>
+    </div>
+    {% if isSignedIn %}
+    <a href="/dashboard" class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded text-sm font-medium no-underline">
+      Dashboard
+    </a>
+    {% else %}
+    <a href="/login" class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded text-sm font-medium no-underline">
+      Sign In
+    </a>
+    {% endif %}
+  </div>
+</nav>
+
+{# ========== HERO ========== #}
+<section id="main-content" class="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-16 text-center">
+  <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+    Translation management<br class="hidden sm:block"> <span class="text-primary">you own</span>
+  </h1>
+  <p class="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-10">
+    Open-source, self-hosted localization platform for teams.
+    Manage translations, collaborate with translators, and ship multilingual products — on your infrastructure.
+  </p>
+  <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+    <a href="#quickstart" class="px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium no-underline text-base">
+      Self-Host Now
+    </a>
+    {% if isSignedIn %}
+    <a href="/dashboard" class="px-6 py-3 bg-surface-card hover:bg-surface-hover border border-border text-text-primary rounded-lg font-medium no-underline text-base">
+      Go to Dashboard
+    </a>
+    {% else %}
+    <a href="/login" class="px-6 py-3 bg-surface-card hover:bg-surface-hover border border-border text-text-primary rounded-lg font-medium no-underline text-base">
+      Login
+    </a>
+    {% endif %}
+  </div>
+  <div class="rounded-xl border border-border overflow-hidden shadow-2xl shadow-primary/5">
+    <img src="/public/editor-example.png" alt="Parlats translation editor" class="w-full">
+  </div>
+</section>
+
+{# ========== METRICS BAR ========== #}
+<section class="border-y border-border bg-surface-card/50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+    <div>
+      <div class="text-2xl font-bold text-primary mb-1">AGPL-3.0</div>
+      <div class="text-sm text-text-muted">Open Source</div>
+    </div>
+    <div>
+      <div class="text-2xl font-bold text-primary mb-1">4</div>
+      <div class="text-sm text-text-muted">File Formats</div>
+    </div>
+    <div>
+      <div class="text-2xl font-bold text-primary mb-1">11</div>
+      <div class="text-sm text-text-muted">API Endpoints</div>
+    </div>
+    <div>
+      <div class="text-2xl font-bold text-primary mb-1">5</div>
+      <div class="text-sm text-text-muted">UI Languages</div>
+    </div>
+  </div>
+</section>
+
+{# ========== FEATURE CARDS ========== #}
+<section id="features" class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+  <h2 class="text-3xl font-bold text-center mb-4">Everything you need to ship multilingual</h2>
+  <p class="text-text-secondary text-center max-w-xl mx-auto mb-12">Built for developer teams who want full control over their translation workflow.</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Inline Translation Editor</h3>
+      <p class="text-text-secondary text-sm">Click-to-edit cells, keyboard shortcuts, search, filter by missing translations, and real-time save. No page reloads.</p>
+    </div>
+
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Import with Diff Preview</h3>
+      <p class="text-text-secondary text-sm">Multi-step import wizard with visual diffs. Accept or reject each translation individually before committing changes.</p>
+    </div>
+
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Developer CLI</h3>
+      <p class="text-text-secondary text-sm"><code class="text-xs bg-surface px-1 py-0.5 rounded">parlats pull</code> and <code class="text-xs bg-surface px-1 py-0.5 rounded">push</code> with presets for next-intl, i18next, react-intl, vue-i18n, and more.</p>
+    </div>
+
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">REST API</h3>
+      <p class="text-text-secondary text-sm">11 endpoints with key-based auth, rate limiting, and interactive docs. Automate your entire localization pipeline.</p>
+    </div>
+
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Team Roles &amp; Permissions</h3>
+      <p class="text-text-secondary text-sm">Owner, admin, developer, and translator roles with email invitations and granular access control on every action.</p>
+    </div>
+
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Change History</h3>
+      <p class="text-text-secondary text-sm">Full audit log of every edit, import, and team action. Visual diffs show exactly what changed, when, and by whom.</p>
+    </div>
+
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Comments &amp; Collaboration</h3>
+      <p class="text-text-secondary text-sm">Leave comments on any translation key for async feedback. Email digest notifications keep your team in the loop.</p>
+    </div>
+
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Multi-Format Support</h3>
+      <p class="text-text-secondary text-sm">Import and export in JSON (nested &amp; flat), CSV, YAML, and XLSX. Auto-detects format on upload.</p>
+    </div>
+
+    <div class="bg-surface-card border border-border rounded-xl p-6">
+      <div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+      </div>
+      <h3 class="font-semibold text-lg mb-2">Self-Translated UI</h3>
+      <p class="text-text-secondary text-sm">Parlats translates itself across 328 keys in English, Spanish, French, German, and Japanese. Real dogfooding.</p>
+    </div>
+  </div>
+</section>
+
+{# ========== AI TRANSLATIONS — COMING SOON ========== #}
+<section class="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+  <div class="relative bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 rounded-xl p-8 sm:p-10 overflow-hidden">
+    <div class="absolute top-4 right-4 px-3 py-1 bg-primary/20 text-primary text-xs font-semibold rounded-full uppercase tracking-wide">Coming Soon</div>
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+      <div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary shrink-0">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/></svg>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold mb-2">AI-Powered Translations</h3>
+        <p class="text-text-secondary text-sm max-w-2xl">Translate your entire project into any language with one click. AI suggestions appear inline in the editor — review, edit, and approve before saving. Your data stays on your infrastructure.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========== CLI SECTION ========== #}
+<section id="cli" class="bg-surface-card/30 border-y border-border py-20">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <h2 class="text-3xl font-bold text-center mb-4">A CLI that fits your stack</h2>
+    <p class="text-text-secondary text-center max-w-xl mx-auto mb-10">Pull and push translations directly from your project. Works with the frameworks you already use.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-surface-card border border-border rounded-xl overflow-hidden">
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-border">
+          <span class="w-3 h-3 rounded-full bg-danger/60"></span>
+          <span class="w-3 h-3 rounded-full bg-warning/60"></span>
+          <span class="w-3 h-3 rounded-full bg-success/60"></span>
+          <span class="ml-2 text-xs text-text-muted font-mono">terminal</span>
+        </div>
+        <pre class="p-5 text-sm font-mono text-text-primary overflow-x-auto"><code><span class="text-text-muted">$</span> parlats init
+<span class="text-primary">?</span> Framework preset: <span class="text-text-secondary">next-intl</span>
+<span class="text-primary">?</span> Source locale: <span class="text-text-secondary">en</span>
+<span class="text-success">&#10003;</span> Created .parlats.yml
+
+<span class="text-text-muted">$</span> parlats pull
+<span class="text-success">&#10003;</span> messages/en.json  <span class="text-text-muted">142 keys</span>
+<span class="text-success">&#10003;</span> messages/es.json  <span class="text-text-muted">138 keys</span>
+<span class="text-success">&#10003;</span> messages/fr.json  <span class="text-text-muted">135 keys</span></code></pre>
+      </div>
+
+      <div class="flex flex-col gap-4 justify-center">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-sm mb-1">Framework Presets</h3>
+            <p class="text-text-secondary text-sm">next-intl, i18next, react-i18next, react-intl, vue-i18n</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-sm mb-1">Pull &amp; Push</h3>
+            <p class="text-text-secondary text-sm">Sync translations with your project. Namespace-aware, conflict-detecting.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-sm mb-1">Translation Status</h3>
+            <p class="text-text-secondary text-sm">See progress per locale at a glance with <code class="text-xs bg-surface px-1 py-0.5 rounded">parlats status</code>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========== COMPARISON TABLE ========== #}
+<section id="compare" class="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+  <h2 class="text-3xl font-bold text-center mb-4">Why Parlats?</h2>
+  <p class="text-text-secondary text-center max-w-xl mx-auto mb-12">Compare your options for managing translations.</p>
+
+  <div class="max-w-4xl mx-auto overflow-x-auto rounded-xl border border-border">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-border bg-surface-card">
+          <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary"></th>
+          <th scope="col" class="text-center px-4 py-3 font-medium text-text-secondary">Spreadsheets</th>
+          <th scope="col" class="text-center px-4 py-3 font-medium text-text-secondary">Hosted SaaS</th>
+          <th scope="col" class="text-center px-4 py-3 font-medium text-primary bg-primary/5">Parlats</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-border">
+          <td class="px-4 py-3 font-medium">Cost</td>
+          <td class="px-4 py-3 text-center text-text-secondary">Free</td>
+          <td class="px-4 py-3 text-center text-text-secondary">$$&ndash;$$$$/mo</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">Free</td>
+        </tr>
+        <tr class="border-b border-border">
+          <td class="px-4 py-3 font-medium">Self-hosted</td>
+          <td class="px-4 py-3 text-center text-text-muted">N/A</td>
+          <td class="px-4 py-3 text-center text-danger">No</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">Yes</td>
+        </tr>
+        <tr class="border-b border-border">
+          <td class="px-4 py-3 font-medium">Open source</td>
+          <td class="px-4 py-3 text-center text-text-muted">N/A</td>
+          <td class="px-4 py-3 text-center text-danger">Rarely</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">AGPL-3.0</td>
+        </tr>
+        <tr class="border-b border-border">
+          <td class="px-4 py-3 font-medium">REST API</td>
+          <td class="px-4 py-3 text-center text-danger">No</td>
+          <td class="px-4 py-3 text-center text-success">Yes</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">Yes</td>
+        </tr>
+        <tr class="border-b border-border">
+          <td class="px-4 py-3 font-medium">CLI tool</td>
+          <td class="px-4 py-3 text-center text-danger">No</td>
+          <td class="px-4 py-3 text-center text-text-secondary">Varies</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">Yes</td>
+        </tr>
+        <tr class="border-b border-border">
+          <td class="px-4 py-3 font-medium">Import diff preview</td>
+          <td class="px-4 py-3 text-center text-danger">No</td>
+          <td class="px-4 py-3 text-center text-text-secondary">Varies</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">Yes</td>
+        </tr>
+        <tr class="border-b border-border">
+          <td class="px-4 py-3 font-medium">Team roles</td>
+          <td class="px-4 py-3 text-center text-danger">No</td>
+          <td class="px-4 py-3 text-center text-success">Yes</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">4 roles</td>
+        </tr>
+        <tr class="border-b border-border">
+          <td class="px-4 py-3 font-medium">Change history</td>
+          <td class="px-4 py-3 text-center text-danger">No</td>
+          <td class="px-4 py-3 text-center text-text-secondary">Varies</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">Full audit log</td>
+        </tr>
+        <tr class="border-b border-border">
+          <td class="px-4 py-3 font-medium">GDPR compliant</td>
+          <td class="px-4 py-3 text-center text-danger">No</td>
+          <td class="px-4 py-3 text-center text-text-secondary">Varies</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">Yes</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 font-medium">Your data</td>
+          <td class="px-4 py-3 text-center text-text-secondary">Google/MS</td>
+          <td class="px-4 py-3 text-center text-text-secondary">Vendor</td>
+          <td class="px-4 py-3 text-center font-semibold text-success bg-primary/5">You own it</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{# ========== QUICK START ========== #}
+<section id="quickstart" class="bg-surface-card/30 border-y border-border py-20">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <h2 class="text-3xl font-bold text-center mb-4">Running in 60 seconds</h2>
+    <p class="text-text-secondary text-center max-w-xl mx-auto mb-10">Three commands. That's it.</p>
+
+    <div class="bg-surface-card border border-border rounded-xl overflow-hidden">
+      <div class="flex items-center gap-2 px-4 py-3 border-b border-border bg-surface-card">
+        <span class="w-3 h-3 rounded-full bg-danger/60"></span>
+        <span class="w-3 h-3 rounded-full bg-warning/60"></span>
+        <span class="w-3 h-3 rounded-full bg-success/60"></span>
+        <span class="ml-2 text-xs text-text-muted font-mono">terminal</span>
+      </div>
+      <pre class="p-6 text-sm font-mono text-text-primary overflow-x-auto"><code><span class="text-text-muted">$</span> git clone https://github.com/CodiHarbor/Parlats.git &amp;&amp; cd parlats
+<span class="text-text-muted">$</span> cp .env.example .env
+<span class="text-text-muted">$</span> docker compose up -d
+<span class="text-success">&#10003; Parlats is running at http://localhost:3100</span></code></pre>
+    </div>
+
+    <p class="text-text-muted text-sm text-center mt-4">
+      Requires Docker or Podman. See the <a href="https://github.com/CodiHarbor/Parlats#deployment" class="text-primary hover:text-primary-hover no-underline">deployment guide</a> for production setup.
+    </p>
+  </div>
+</section>
+
+{# ========== OPEN SOURCE CTA ========== #}
+<section class="py-20">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <h2 class="text-3xl font-bold mb-4">Built in the open</h2>
+    <p class="text-text-secondary max-w-xl mx-auto mb-8">
+      Parlats is open source and free to self-host. Contributions welcome.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="https://github.com/CodiHarbor/Parlats" target="_blank" rel="noopener"
+         class="px-6 py-3 bg-surface-card hover:bg-surface-hover border border-border text-text-primary rounded-lg font-medium no-underline inline-flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        Star on GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+{# ========== FOOTER ========== #}
+<footer class="border-t border-border py-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-8">
+      <div>
+        <h3 class="font-semibold text-sm text-text-primary mb-3">Product</h3>
+        <ul class="space-y-2 list-none p-0 m-0">
+          <li><a href="#features" class="text-sm text-text-secondary hover:text-text-primary no-underline">Features</a></li>
+          <li><a href="#cli" class="text-sm text-text-secondary hover:text-text-primary no-underline">CLI</a></li>
+          <li><a href="/pricing" class="text-sm text-text-secondary hover:text-text-primary no-underline">Pricing</a></li>
+          <li><a href="#compare" class="text-sm text-text-secondary hover:text-text-primary no-underline">Compare</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm text-text-primary mb-3">Developers</h3>
+        <ul class="space-y-2 list-none p-0 m-0">
+          <li><a href="#quickstart" class="text-sm text-text-secondary hover:text-text-primary no-underline">Quick Start</a></li>
+          <li><a href="https://github.com/CodiHarbor/Parlats" target="_blank" rel="noopener" class="text-sm text-text-secondary hover:text-text-primary no-underline">GitHub</a></li>
+          <li><a href="https://github.com/CodiHarbor/Parlats/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="text-sm text-text-secondary hover:text-text-primary no-underline">Contributing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm text-text-primary mb-3">Company</h3>
+        <ul class="space-y-2 list-none p-0 m-0">
+          <li><a href="/pricing" class="text-sm text-text-secondary hover:text-text-primary no-underline">Pricing</a></li>
+          <li><a href="mailto:contact@parlats.com" class="text-sm text-text-secondary hover:text-text-primary no-underline">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm text-text-primary mb-3">Legal</h3>
+        <ul class="space-y-2 list-none p-0 m-0">
+          <li><a href="/privacy" class="text-sm text-text-secondary hover:text-text-primary no-underline">Privacy Policy</a></li>
+          <li><a href="/terms" class="text-sm text-text-secondary hover:text-text-primary no-underline">Terms of Service</a></li>
+          <li><a href="https://github.com/CodiHarbor/Parlats/blob/main/LICENSE" target="_blank" rel="noopener" class="text-sm text-text-secondary hover:text-text-primary no-underline">License (AGPL-3.0)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-border pt-6 text-center text-sm text-text-muted">
+      &copy; {{ year or "2026" }} CodiHarbor. Parlats — Open-source translation management.
+    </div>
+  </div>
+</footer>
+{% endblock %}

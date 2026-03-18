@@ -1,0 +1,129 @@
+{% extends "base-public.njk" %}
+
+{% block body %}
+<nav class="sticky top-0 z-50 bg-surface/95 backdrop-blur border-b border-border">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+    <a href="/" class="flex items-center gap-2 text-lg font-bold text-text-primary no-underline">
+      <img src="/public/favicon.svg" alt="" style="width:1.25rem;height:1.25rem" class="w-5 h-5 rounded">
+      Parlats
+    </a>
+    <div class="hidden sm:flex items-center gap-6 text-sm">
+      <a href="/#features" class="text-text-secondary hover:text-text-primary no-underline">Features</a>
+      <a href="/#cli" class="text-text-secondary hover:text-text-primary no-underline">CLI</a>
+      <a href="https://github.com/CodiHarbor/Parlats" target="_blank" rel="noopener" class="text-text-secondary hover:text-text-primary no-underline">GitHub</a>
+      <a href="/pricing" class="text-text-primary font-medium no-underline">Pricing</a>
+    </div>
+    {% if isSignedIn %}
+      <a href="/dashboard" class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded text-sm font-medium no-underline">
+        Dashboard
+      </a>
+    {% else %}
+      <a href="/login" class="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded text-sm font-medium no-underline">
+        Sign In
+      </a>
+    {% endif %}
+  </div>
+</nav>
+
+<div class="flex-1 max-w-4xl mx-auto px-4 py-16">
+  <div class="text-center mb-12">
+    <h1 class="text-3xl font-bold text-text-primary mb-2">Simple, transparent pricing</h1>
+    <p class="text-text-secondary">Self-host for free or let us handle everything</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+    {# Self-hosted card #}
+    <div class="bg-surface-card border border-border rounded-xl p-6 transition-all duration-200 hover:border-border-strong hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20">
+      <p class="text-sm text-text-muted font-medium mb-1 uppercase tracking-wide">Self-hosted</p>
+      <div class="text-3xl font-bold text-text-primary mb-1">Free</div>
+      <p class="text-sm text-text-muted mb-5">forever, open source</p>
+      <div class="border-t border-border pt-4 space-y-2.5 mb-6">
+        <p class="text-sm text-text-secondary">&#10003; Unlimited everything</p>
+        <p class="text-sm text-text-secondary">&#10003; Full editor &amp; API</p>
+        <p class="text-sm text-text-secondary">&#10003; CLI tool</p>
+        <p class="text-sm text-text-secondary">&#10003; All file formats</p>
+        <p class="text-sm text-text-secondary">&#10003; Team collaboration</p>
+        <p class="text-sm text-text-secondary">&#10003; Change history &amp; audit log</p>
+      </div>
+      <a href="https://github.com/CodiHarbor/Parlats" class="block text-center bg-surface border border-border hover:bg-surface-hover hover:border-border-strong text-text-primary font-medium py-2.5 rounded-lg transition-colors no-underline">
+        Get Started &#8594;
+      </a>
+    </div>
+
+    {# Cloud card #}
+    <div class="bg-surface-card border-2 border-primary rounded-xl p-6 relative transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10">
+      <span class="absolute -top-2.5 right-4 bg-primary text-white text-xs font-semibold px-3 py-0.5 rounded-full">RECOMMENDED</span>
+      <p class="text-sm text-primary font-medium mb-1 uppercase tracking-wide">Cloud</p>
+      <div class="text-3xl font-bold text-text-primary mb-1">$49<span class="text-base font-normal text-text-muted">/mo</span></div>
+      <p class="text-sm text-text-muted mb-5">per organization</p>
+      <div class="border-t border-border pt-4 space-y-2.5 mb-6">
+        <p class="text-sm text-text-secondary">&#10003; Everything in Self-hosted</p>
+        <p class="text-sm text-text-secondary">&#10003; Managed hosting</p>
+        <p class="text-sm text-text-secondary">&#10003; Automatic updates</p>
+        <p class="text-sm text-text-secondary">&#10003; Daily backups</p>
+        <p class="text-sm text-text-secondary">&#10003; Email support</p>
+        <p class="text-sm text-text-secondary">&#10003; 99.9% uptime SLA</p>
+      </div>
+      {% if isSignedIn %}
+        <form method="post" action="/billing/checkout">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+          <button type="submit" class="w-full bg-primary hover:bg-primary-hover text-white font-medium py-2.5 rounded-lg transition-colors cursor-pointer">
+            Subscribe &#8594;
+          </button>
+        </form>
+      {% else %}
+        <a href="/register" class="block text-center bg-primary hover:bg-primary-hover text-white font-medium py-2.5 rounded-lg transition-colors no-underline">
+          Subscribe &#8594;
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <p class="text-center text-sm text-text-muted mt-8">
+    Need custom terms or SLA? <a href="mailto:contact@parlats.com" class="text-primary hover:text-primary-hover">Contact us</a>
+  </p>
+</div>
+
+{# ========== FOOTER ========== #}
+<footer class="border-t border-border py-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-8">
+      <div>
+        <h3 class="font-semibold text-sm text-text-primary mb-3">Product</h3>
+        <ul class="space-y-2 list-none p-0 m-0">
+          <li><a href="/#features" class="text-sm text-text-secondary hover:text-text-primary no-underline">Features</a></li>
+          <li><a href="/#cli" class="text-sm text-text-secondary hover:text-text-primary no-underline">CLI</a></li>
+          <li><a href="/pricing" class="text-sm text-text-secondary hover:text-text-primary no-underline">Pricing</a></li>
+          <li><a href="/#compare" class="text-sm text-text-secondary hover:text-text-primary no-underline">Compare</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm text-text-primary mb-3">Developers</h3>
+        <ul class="space-y-2 list-none p-0 m-0">
+          <li><a href="/#quickstart" class="text-sm text-text-secondary hover:text-text-primary no-underline">Quick Start</a></li>
+          <li><a href="https://github.com/CodiHarbor/Parlats" target="_blank" rel="noopener" class="text-sm text-text-secondary hover:text-text-primary no-underline">GitHub</a></li>
+          <li><a href="https://github.com/CodiHarbor/Parlats/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="text-sm text-text-secondary hover:text-text-primary no-underline">Contributing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm text-text-primary mb-3">Company</h3>
+        <ul class="space-y-2 list-none p-0 m-0">
+          <li><a href="/pricing" class="text-sm text-text-secondary hover:text-text-primary no-underline">Pricing</a></li>
+          <li><a href="mailto:contact@parlats.com" class="text-sm text-text-secondary hover:text-text-primary no-underline">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm text-text-primary mb-3">Legal</h3>
+        <ul class="space-y-2 list-none p-0 m-0">
+          <li><a href="/privacy" class="text-sm text-text-secondary hover:text-text-primary no-underline">Privacy Policy</a></li>
+          <li><a href="/terms" class="text-sm text-text-secondary hover:text-text-primary no-underline">Terms of Service</a></li>
+          <li><a href="https://github.com/CodiHarbor/Parlats/blob/main/LICENSE" target="_blank" rel="noopener" class="text-sm text-text-secondary hover:text-text-primary no-underline">License (AGPL-3.0)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-border pt-6 text-center text-sm text-text-muted">
+      &copy; {{ year or "2026" }} CodiHarbor. Parlats — Open-source translation management.
+    </div>
+  </div>
+</footer>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% from "macros/icons.njk" import icon %}
+{# HTMX partial: translation key listing table #}
+{% if keys.length > 0 %}
+<div class="overflow-x-auto rounded-lg border border-border">
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="border-b border-border bg-surface-card">
+        <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary sticky left-0 bg-surface-card z-10">{{ t("editor.table_key") }}</th>
+        {% for lang in languages %}
+        <th scope="col" class="text-left px-4 py-3 font-medium text-text-secondary">
+          <code class="text-xs">{{ lang.language_code }}</code>
+        </th>
+        {% endfor %}
+        <th scope="col" class="w-10"><span class="sr-only">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for key in keys %}
+      <tr class="border-b border-border last:border-0 hover:bg-surface-hover/50 transition-colors">
+        <td class="px-4 py-3 sticky left-0 bg-surface-card z-10">
+          <span class="font-medium text-text-primary">{{ key.key }}</span>
+          <button type="button" aria-label="Comments for {{ key.key }}"
+            class="inline-flex items-center gap-0.5 ml-1.5 {% if commentCounts[key.id] %}text-primary/70 hover:text-primary{% else %}text-text-muted/30 hover:text-text-muted{% endif %} bg-transparent border-0 cursor-pointer p-0 align-middle"
+            hx-get="/projects/{{ project.id }}/keys/{{ key.id }}/comments"
+            hx-target="#comment-panel-content"
+            hx-swap="innerHTML"
+            onclick="document.getElementById('comment-panel').classList.remove('hidden')">
+            {{ icon("chat", "w-3.5 h-3.5") }}
+            {% if commentCounts[key.id] %}<span class="text-xs font-medium">{{ commentCounts[key.id] }}</span>{% endif %}
+          </button>
+          {% if key.description %}<br><span class="text-xs text-text-muted">{{ key.description }}</span>{% endif %}
+        </td>
+        {% for lang in languages %}
+        {% set tv = translationMap[key.id][lang.language_code] if translationMap[key.id] %}
+        <td id="cell-{{ key.id }}-{{ lang.language_code }}"
+            class="px-4 py-3 max-w-[300px] truncate cursor-pointer hover:bg-primary/5 transition-colors"
+            hx-get="/projects/{{ project.id }}/keys/{{ key.id }}/edit?lang={{ lang.language_code }}"
+            hx-target="#cell-{{ key.id }}-{{ lang.language_code }}"
+            hx-swap="innerHTML"
+            tabindex="0"
+            role="button"
+            onkeydown="if(event.key==='Enter')this.click()">
+          {% if tv and tv.value %}
+          <span>{{ tv.value | highlight_tokens(project.interpolation_format) }}</span>
+          {% else %}
+          <span class="inline-block px-1.5 py-0.5 text-xs bg-danger/15 text-danger rounded">{{ t("common.missing") }}</span>
+          {% endif %}
+        </td>
+        {% endfor %}
+        <td class="px-4 py-3">
+          <button type="button" aria-label="Delete key {{ key.key }}"
+            hx-post="/projects/{{ project.id }}/keys/{{ key.id }}/delete"
+            hx-target="closest tr"
+            hx-swap="outerHTML swap:200ms"
+            class="text-text-muted hover:text-danger text-sm bg-transparent border-0 cursor-pointer p-0"
+            hx-confirm="Delete key &quot;{{ key.key }}&quot;?">{{ icon("x", "w-4 h-4") }}</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{# Pagination with ellipsis #}
+{% if totalPages > 1 %}
+<nav class="flex gap-1 items-center justify-center mt-4">
+  {# Previous button #}
+  {% if page > 1 %}
+  <a href="/projects/{{ project.id }}/editor?namespace={{ namespaceId }}&page={{ page - 1 }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+     hx-get="/projects/{{ project.id }}/editor/keys?namespace={{ namespaceId }}&page={{ page - 1 }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+     hx-target="#editor-content"
+     hx-swap="innerHTML"
+     hx-push-url="/projects/{{ project.id }}/editor?namespace={{ namespaceId }}&page={{ page - 1 }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+     class="px-2 py-1 rounded text-sm no-underline text-text-secondary hover:bg-surface-hover"
+     aria-label="Previous page">&lsaquo;</a>
+  {% else %}
+  <span class="px-2 py-1 rounded text-sm text-text-muted/30">&lsaquo;</span>
+  {% endif %}
+
+  {# Page numbers with ellipsis #}
+  {% for p in pageWindow %}
+    {% if p === null %}
+      <span class="px-2 py-1 text-sm text-text-muted">…</span>
+    {% else %}
+      <a href="/projects/{{ project.id }}/editor?namespace={{ namespaceId }}&page={{ p }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+         hx-get="/projects/{{ project.id }}/editor/keys?namespace={{ namespaceId }}&page={{ p }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+         hx-target="#editor-content"
+         hx-swap="innerHTML"
+         hx-push-url="/projects/{{ project.id }}/editor?namespace={{ namespaceId }}&page={{ p }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+         class="px-3 py-1 rounded text-sm no-underline
+                {% if p == page %}bg-primary text-white font-semibold{% else %}text-text-secondary hover:bg-surface-hover{% endif %}">
+        {{ p }}
+      </a>
+    {% endif %}
+  {% endfor %}
+
+  {# Next button #}
+  {% if page < totalPages %}
+  <a href="/projects/{{ project.id }}/editor?namespace={{ namespaceId }}&page={{ page + 1 }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+     hx-get="/projects/{{ project.id }}/editor/keys?namespace={{ namespaceId }}&page={{ page + 1 }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+     hx-target="#editor-content"
+     hx-swap="innerHTML"
+     hx-push-url="/projects/{{ project.id }}/editor?namespace={{ namespaceId }}&page={{ page + 1 }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+     class="px-2 py-1 rounded text-sm no-underline text-text-secondary hover:bg-surface-hover"
+     aria-label="Next page">&rsaquo;</a>
+  {% else %}
+  <span class="px-2 py-1 rounded text-sm text-text-muted/30">&rsaquo;</span>
+  {% endif %}
+</nav>
+{% endif %}
+
+<p class="text-center text-xs text-text-muted mt-3">
+  {% if search or missing %}{% if totalKeys == 1 %}{{ t("editor.results_count_one", { count: totalKeys }) }}{% else %}{{ t("editor.results_count", { count: totalKeys }) }}{% endif %}{% if search %} {{ t("editor.results_for", { search: search }) }}{% endif %}{% if missing %} {{ t("editor.results_missing", { lang: missing }) }}{% endif %}{% else %}{% if totalKeys == 1 %}{{ t("editor.keys_count_one", { count: totalKeys }) }}{% else %}{{ t("editor.keys_count", { count: totalKeys }) }}{% endif %}{% endif %}
+</p>
+{% else %}
+{% if search or missing %}
+<p class="text-text-muted text-sm">{{ t("editor.no_results") }}{% if search %} {{ t("editor.no_results_for", { search: search }) }}{% endif %}{% if missing %} {{ t("editor.no_results_missing", { lang: missing }) }}{% endif %}.</p>
+{% else %}
+<p class="text-text-muted text-sm">{{ t("editor.no_keys") }}</p>
+{% endif %}
+{% endif %}
+
+{# OOB tab count badges — update all namespace tabs with filtered counts #}
+{% if nsCounts %}
+{% for nsId, count in nsCounts %}
+<span id="tab-count-{{ nsId }}" hx-swap-oob="true" class="text-text-muted font-normal">({{ count }})</span>
+{% endfor %}
+{% endif %}

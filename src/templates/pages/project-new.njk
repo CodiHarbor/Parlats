@@ -1,0 +1,81 @@
+{% extends "base.njk" %}
+
+{% from "macros/forms.njk" import field, submit %}
+
+{% block title %}New Project — Parlats{% endblock %}
+
+{% block content %}
+<div class="max-w-lg">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold mb-1">{{ t("projects.new_title") }}</h1>
+    <p class="text-text-muted text-sm">{{ t("projects.new_subtitle") }}</p>
+  </div>
+
+  <form method="post" action="/projects" class="space-y-4">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    {{ field("name", t("projects.field_name"), value=values.name,
+       error=errors.name._errors[0] if errors and errors.name,
+       required=true, placeholder=t("projects.placeholder_name")) }}
+
+    {{ field("description", t("projects.field_description"), value=values.description,
+       placeholder=t("projects.placeholder_description")) }}
+
+    <div class="mb-4">
+      <label for="default_language" class="block text-sm font-medium text-text-secondary mb-1">{{ t("projects.field_default_language") }}</label>
+      <input type="text" id="default_language" name="default_language"
+        value="{{ values.default_language or 'en' }}"
+        list="language-suggestions"
+        placeholder="en"
+        required
+        class="w-full bg-surface border border-border rounded px-3 py-2 text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+      <datalist id="language-suggestions">
+        <option value="en">
+        <option value="es">
+        <option value="fr">
+        <option value="de">
+        <option value="pt">
+        <option value="pt-BR">
+        <option value="it">
+        <option value="ja">
+        <option value="zh">
+        <option value="ko">
+        <option value="ar">
+        <option value="ru">
+        <option value="pl">
+        <option value="tr">
+        <option value="nl">
+        <option value="sv">
+        <option value="da">
+        <option value="fi">
+        <option value="nb">
+        <option value="he">
+        <option value="th">
+        <option value="vi">
+        <option value="uk">
+        <option value="cs">
+        <option value="hu">
+        <option value="ro">
+        <option value="hi">
+      </datalist>
+      <p class="text-text-muted text-xs mt-1">{{ t("projects.default_language_help") }}</p>
+    </div>
+
+    <div class="mb-4">
+      <label for="interpolation_format" class="block text-sm font-medium text-text-secondary mb-1">{{ t("projects.field_interpolation_format") }}</label>
+      <select id="interpolation_format" name="interpolation_format"
+        class="w-full bg-surface border border-border rounded px-3 py-2 text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+        <option value="auto" {% if not values.interpolation_format or values.interpolation_format == 'auto' %}selected{% endif %}>{{ t("projects.option_auto_detect") }}</option>
+        <option value="i18next" {% if values.interpolation_format == 'i18next' %}selected{% endif %}>i18next (&#123;&#123;name&#125;&#125;)</option>
+        <option value="icu" {% if values.interpolation_format == 'icu' %}selected{% endif %}>ICU MessageFormat ({name})</option>
+      </select>
+      <p class="text-text-muted text-xs mt-1">{{ t("projects.interpolation_help") }}</p>
+    </div>
+
+    <div class="flex gap-2">
+      {{ submit(t("projects.create_project_btn")) }}
+      <a href="/projects"
+         class="px-4 py-2 bg-surface-card border border-border hover:bg-surface-hover text-text-primary rounded font-medium text-sm no-underline">{{ t("common.cancel") }}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

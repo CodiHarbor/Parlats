@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="dark notranslate" translate="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google" content="notranslate">
+  <meta name="description" content="{{ description or 'Open-source translation management platform. Self-hosted, team-ready, developer-friendly.' }}">
+  <title>{{ pageTitle or 'Parlats — Translation management you own' }}</title>
+
+  {# Open Graph #}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Parlats">
+  <meta property="og:title" content="{{ pageTitle or 'Parlats — Translation management you own' }}">
+  <meta property="og:description" content="{{ description or 'Open-source translation management platform. Self-hosted, team-ready, developer-friendly.' }}">
+  {% if appUrl %}<meta property="og:url" content="{{ appUrl }}{{ requestPath or '/' }}">{% endif %}
+  {% if appUrl %}<meta property="og:image" content="{{ appUrl }}/public/icon-512.png">{% endif %}
+
+  {# Twitter Card #}
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ pageTitle or 'Parlats — Translation management you own' }}">
+  <meta name="twitter:description" content="{{ description or 'Open-source translation management platform. Self-hosted, team-ready, developer-friendly.' }}">
+  {% if appUrl %}<meta name="twitter:image" content="{{ appUrl }}/public/icon-512.png">{% endif %}
+
+  {# Canonical #}
+  {% if appUrl %}<link rel="canonical" href="{{ appUrl }}{{ requestPath or '/' }}">{% endif %}
+
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/public/favicon-32x32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/public/favicon-16x16.png" sizes="16x16" type="image/png">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="manifest" href="/public/site.webmanifest">
+  <meta name="theme-color" content="#6366f1">
+  <link rel="stylesheet" href="/public/tailwind.css">
+  {% block head %}{% endblock %}
+</head>
+<body class="min-h-screen bg-surface text-text-primary">
+  {% block body %}{% endblock %}
+</body>
+</html>

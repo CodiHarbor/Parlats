@@ -1,0 +1,67 @@
+{# verify-email.njk — standalone page, no sidebar layout #}
+<!DOCTYPE html>
+<html lang="en" class="dark notranslate" translate="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verify Email — Parlats</title>
+  <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/public/favicon-32x32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="/public/favicon-16x16.png" sizes="16x16" type="image/png">
+  <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+  <link rel="manifest" href="/public/site.webmanifest">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="/public/tailwind.css">
+</head>
+<body class="flex items-center justify-center min-h-screen bg-surface text-text-primary">
+  <div class="w-full max-w-sm mx-4">
+    {# Brand #}
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-bold flex items-center justify-center gap-2">
+        <img src="/public/favicon.svg" alt="" style="width:1.75rem;height:1.75rem" class="w-7 h-7 rounded"> Parlats
+      </h1>
+    </div>
+
+    {# Card #}
+    <div class="bg-surface-card border border-border rounded-lg p-6 text-center">
+      {% if status == "sent" %}
+        <div class="mb-4 p-3 rounded bg-primary/10 border border-primary/30 text-sm text-primary">
+          Check your email for a verification link.
+        </div>
+        <p class="text-text-secondary text-sm mb-4">
+          We sent a verification email to your address. Click the link in the email to verify your account.
+        </p>
+        <p class="text-text-muted text-xs">The link expires in 24 hours.</p>
+        <div class="mt-6">
+          <a href="/dashboard" class="text-sm text-primary hover:underline">Continue to dashboard</a>
+        </div>
+
+      {% elif status == "verified" %}
+        <div class="mb-4 p-3 rounded bg-success/10 border border-success/30 text-sm text-success">
+          Email verified successfully!
+        </div>
+        <a href="/dashboard"
+           class="inline-block mt-4 w-full py-2 px-4 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-md text-center">
+          Continue to dashboard
+        </a>
+
+      {% elif status == "invalid" %}
+        <div class="mb-4 p-3 rounded bg-danger/10 border border-danger/30 text-sm text-danger">
+          This verification link is invalid or has expired.
+        </div>
+        <p class="text-text-secondary text-sm mb-4">
+          Please try registering again.
+        </p>
+        <a href="/register" class="text-sm text-primary hover:underline">Register</a>
+
+      {% elif status == "missing_token" %}
+        <div class="mb-4 p-3 rounded bg-danger/10 border border-danger/30 text-sm text-danger">
+          No verification token provided.
+        </div>
+        <a href="/login" class="text-sm text-primary hover:underline">Sign in</a>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

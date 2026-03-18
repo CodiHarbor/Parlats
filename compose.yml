@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: parlats-db
+    environment:
+      POSTGRES_DB: parlats
+      POSTGRES_USER: parlats
+      POSTGRES_PASSWORD: parlats_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - parlats_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U parlats"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: parlats-app
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    environment:
+      DATABASE_URL: postgres://parlats:parlats_dev@db:5432/parlats
+      PORT: "3100"
+      NODE_ENV: development
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+
+volumes:
+  parlats_pgdata:

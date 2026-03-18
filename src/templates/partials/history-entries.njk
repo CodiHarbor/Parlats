@@ -1,0 +1,85 @@
+{% from "macros/icons.njk" import icon %}
+{% if grouped.length > 0 %}
+<div class="space-y-3">
+  {% for group in grouped %}
+    <div class="pt-2 pb-1">
+      <span class="text-xs font-semibold text-text-muted uppercase tracking-wide">{{ group.date }}</span>
+    </div>
+
+    {% for op in group.items %}
+    <a href="/projects/{{ project.id }}/history/{{ op.id }}"
+       class="flex gap-4 p-4 bg-surface-card border border-border rounded-lg hover:border-primary/30 transition-colors no-underline group">
+      {% if op.type == "edit" %}
+      <div class="w-9 h-9 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center text-primary">{{ icon("pencil", "w-4 h-4") }}</div>
+      {% elif op.type == "import_json" or op.type == "import_csv" or op.type == "import_yaml" %}
+      <div class="w-9 h-9 shrink-0 rounded-lg bg-success/10 flex items-center justify-center text-success">{{ icon("upload", "w-4 h-4") }}</div>
+      {% elif op.type == "ai_translate" %}
+      <div class="w-9 h-9 shrink-0 rounded-lg bg-danger/10 flex items-center justify-center text-danger">{{ icon("sparkles", "w-4 h-4") }}</div>
+      {% elif op.type == "batch_add" %}
+      <div class="w-9 h-9 shrink-0 rounded-lg bg-warning/10 flex items-center justify-center text-warning">{{ icon("plus", "w-4 h-4") }}</div>
+      {% elif op.type == "batch_delete" %}
+      <div class="w-9 h-9 shrink-0 rounded-lg bg-danger/10 flex items-center justify-center text-danger">{{ icon("minus", "w-4 h-4") }}</div>
+      {% else %}
+      <div class="w-9 h-9 shrink-0 rounded-lg bg-surface-hover flex items-center justify-center text-text-muted">{{ icon("circle", "w-4 h-4") }}</div>
+      {% endif %}
+
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="font-semibold text-sm text-text-primary">{{ op.user_name or op.user_email }}</span>
+          <span class="text-sm text-text-secondary">{{ op.summary }}</span>
+          <span class="ml-auto text-xs text-text-muted shrink-0">{{ op.created_at | timeago }}</span>
+        </div>
+
+        {% if previews[op.id] and previews[op.id].length > 0 %}
+        <div class="mt-2 p-2 bg-surface rounded text-xs font-mono space-y-1">
+          {% for d in previews[op.id] %}
+          <div class="text-text-muted truncate">
+            <span class="text-text-secondary">{{ d.key_name }}</span>
+            {% if d.language_code %}<span class="text-text-muted"> ({{ d.language_code }})</span>{% endif %}:
+            {% if d.action == "updated" %}
+              <span class="text-danger">{{ d.old_value | truncate(40) }}</span>
+              <span class="text-text-muted">&rarr;</span>
+              <span class="text-success">{{ d.new_value | truncate(40) }}</span>
+            {% elif d.action == "created" %}
+              <span class="text-success">{{ d.new_value | truncate(60) if d.new_value else t("history.preview_new_key") }}</span>
+            {% elif d.action == "deleted" %}
+              <span class="text-danger line-through">{{ d.old_value | truncate(60) if d.old_value else t("history.preview_deleted") }}</span>
+            {% endif %}
+          </div>
+          {% endfor %}
+          {% if op.detail_count > 3 %}
+          <div class="text-text-muted">{% if op.detail_count - 3 == 1 %}{{ t("history.more_changes_one", { count: op.detail_count - 3 }) }}{% else %}{{ t("history.more_changes", { count: op.detail_count - 3 }) }}{% endif %}</div>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  {% endfor %}
+</div>
+
+{% if totalPages > 1 %}
+<nav class="flex gap-1 justify-center mt-6">
+  {% for p in range(1, totalPages + 1) %}
+  <a href="#"
+     hx-get="/projects/{{ project.id }}/history?page={{ p }}{% if typeFilter %}&type={{ typeFilter }}{% endif %}"
+     hx-target="#history-content"
+     hx-swap="innerHTML"
+     class="px-3 py-1 rounded text-sm no-underline
+            {% if p == page %}bg-primary text-white font-semibold{% else %}text-text-secondary hover:bg-surface-hover{% endif %}">
+    {{ p }}
+  </a>
+  {% endfor %}
+</nav>
+{% endif %}
+
+<p class="text-center text-xs text-text-muted mt-3">
+  {% if totalOps == 1 %}{{ t("history.operations_count_one", { count: totalOps }) }}{% else %}{{ t("history.operations_count", { count: totalOps }) }}{% endif %}{% if typeFilter %} {{ t("history.operations_filtered") }}{% endif %}
+</p>
+
+{% else %}
+<div class="text-center py-12 px-4">
+  <h3 class="text-lg font-semibold text-text-primary mb-2">{{ t("history.no_history_title") }}</h3>
+  <p class="text-text-muted">{{ t("history.no_history_message") }}</p>
+</div>
+{% endif %}

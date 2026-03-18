@@ -1,0 +1,137 @@
+{% if error %}
+<div class="p-5 bg-surface-card border border-border rounded-lg">
+  <div class="p-4 mb-4 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+    {{ error }}
+  </div>
+  <button type="button" onclick="wizardGoBack()"
+    class="px-4 py-2 bg-surface hover:bg-surface-hover border border-border text-text-primary rounded font-medium text-sm cursor-pointer">
+    Back
+  </button>
+</div>
+{% else %}
+<div class="p-5 bg-surface-card border border-border rounded-lg space-y-5">
+
+  {# Detection summary #}
+  <div>
+    <h2 class="text-lg font-semibold text-text-primary mb-3">File Analysis</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {# Format #}
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-text-muted">Format:</span>
+        <span class="text-xs font-medium bg-primary/10 text-primary px-2 py-0.5 rounded">{{ detectedFormat | upper }}</span>
+      </div>
+
+      {# Total entries #}
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-text-muted">Total entries:</span>
+        <span class="text-xs font-medium text-text-primary">{{ totalEntries }}</span>
+      </div>
+    </div>
+  </div>
+
+  {# Languages #}
+  <div>
+    <p class="text-xs text-text-muted mb-1.5">Languages ({{ detectedLanguages | length }}):</p>
+    <div class="flex flex-wrap gap-1.5">
+      {% for lang in detectedLanguages %}
+      <code class="text-xs bg-surface px-2 py-0.5 rounded text-text-secondary border border-border">{{ lang }}</code>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# Namespaces #}
+  <div>
+    {% if isBulk %}
+    <p class="text-xs text-text-muted mb-1.5">Namespaces ({{ detectedNamespaces | length }}):</p>
+    <div class="flex flex-wrap gap-1.5">
+      {% for ns in detectedNamespaces %}
+      <code class="text-xs bg-surface px-2 py-0.5 rounded text-text-secondary border border-border">{{ ns }}</code>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-xs text-text-muted mb-1.5">Import to namespace:</p>
+    <select id="import-namespace-select" class="w-full px-3 py-2 bg-surface border border-border rounded text-sm text-text-primary">
+      {% for ns in allNamespaces %}
+      <option value="{{ ns.id }}" {% if ns.id == selectedNamespaceId %}selected{% endif %}>{{ ns.name }}</option>
+      {% endfor %}
+    </select>
+    {% endif %}
+  </div>
+
+  {# Change summary #}
+  <div class="p-3 bg-surface rounded-lg border border-border">
+    <p class="text-sm font-medium text-text-primary mb-2">Changes Detected</p>
+    <div class="flex flex-wrap gap-4 text-sm">
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-green-400"></span>
+        <span class="text-green-400 font-medium">{{ newCount }} new</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+        <span class="text-amber-400 font-medium">{{ changedCount }} changed</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-zinc-500"></span>
+        <span class="text-text-muted">{{ unchangedCount }} unchanged</span>
+      </div>
+    </div>
+  </div>
+
+  {# Action buttons #}
+  <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+    <button type="button" onclick="wizardGoBack()"
+      class="px-4 py-2 bg-surface hover:bg-surface-hover border border-border text-text-primary rounded font-medium text-sm cursor-pointer order-3 sm:order-1">
+      Back
+    </button>
+
+    {% if newCount + changedCount > 0 %}
+    <button type="button"
+      hx-get="/projects/{{ project.id }}/import/preview?token={{ token }}&page=1"
+      hx-target="#preview-content"
+      hx-swap="innerHTML"
+      class="px-4 py-2 bg-surface hover:bg-surface-hover border border-border text-text-primary rounded font-medium text-sm cursor-pointer order-2"
+      onclick="openPreviewModal()">
+      Preview Changes
+    </button>
+
+    <form method="post" action="/projects/{{ project.id }}/import/apply-wizard" id="wizard-apply-form" class="sm:ml-auto order-1 sm:order-3">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <input type="hidden" name="token" value="{{ token }}">
+      {% if not isBulk %}
+      <input type="hidden" name="namespace_id" id="import-namespace-hidden" value="{{ selectedNamespaceId }}">
+      {% endif %}
+      <button type="submit" id="wizard-import-btn"
+        class="w-full px-4 py-2.5 bg-primary hover:bg-primary-hover text-white rounded font-medium text-sm cursor-pointer">
+        Import {{ newCount + changedCount }} change{{ "s" if (newCount + changedCount) != 1 }}
+      </button>
+    </form>
+    {% else %}
+    <div class="sm:ml-auto text-sm text-text-muted order-1 sm:order-3">
+      No changes to import — all translations are up to date.
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if newCount + changedCount > 0 %}
+<script nonce="{{ nonce }}">
+(function() {
+  var form = document.getElementById('wizard-apply-form');
+  if (!form) return;
+  form.addEventListener('submit', function() {
+    wizardShowComplete();
+  });
+
+  // Sync namespace dropdown with hidden input
+  var nsSelect = document.getElementById('import-namespace-select');
+  var nsHidden = document.getElementById('import-namespace-hidden');
+  if (nsSelect && nsHidden) {
+    nsSelect.addEventListener('change', function() {
+      nsHidden.value = nsSelect.value;
+    });
+  }
+})();
+</script>
+{% endif %}
+{% endif %}

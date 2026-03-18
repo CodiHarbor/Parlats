@@ -1,0 +1,116 @@
+{% extends "base.njk" %}
+
+{% from "macros/ui.njk" import breadcrumbs, modal %}
+
+{% block title %}Editor — {{ project.name }} — Parlats{% endblock %}
+
+{% block content %}
+{{ breadcrumbs([
+  { label: t("nav.projects"), url: "/projects" },
+  { label: project.name, url: "/projects/" + project.id },
+  { label: t("editor.title_suffix") }
+]) }}
+
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-2xl font-bold">{{ project.name }} <span class="text-text-muted font-normal text-lg">{{ t("editor.title_suffix") }}</span></h1>
+</div>
+
+{% if namespaces.length == 0 %}
+<p class="text-text-muted">{{ t("editor.no_namespaces") }} <a href="/projects/{{ project.id }}" class="text-primary hover:text-primary-hover">{{ t("editor.no_namespaces_link") }}</a>.</p>
+{% else %}
+
+{# Namespace tabs #}
+<nav id="namespace-tabs" role="tablist" aria-label="Namespaces" class="flex border-b-2 border-border mb-4 overflow-x-auto overflow-y-hidden">
+  {% for ns in namespaces %}
+  <a href="/projects/{{ project.id }}/editor?namespace={{ ns.id }}"
+     class="px-4 py-2 text-sm font-medium no-underline border-b-2 -mb-[2px] whitespace-nowrap
+            {% if ns.id == activeNsId %}border-primary text-primary{% else %}border-transparent text-text-secondary hover:text-text-primary hover:border-border-strong{% endif %}"
+     role="tab" aria-selected="{{ 'true' if ns.id == activeNsId else 'false' }}"
+     hx-get="/projects/{{ project.id }}/editor/keys?namespace={{ ns.id }}"
+     hx-target="#editor-content"
+     hx-swap="innerHTML"
+     hx-include="#editor-search, #missing-filter"
+     hx-push-url="/projects/{{ project.id }}/editor?namespace={{ ns.id }}"
+     data-namespace="{{ ns.id }}"
+     onclick="switchTab(this)">
+    {{ ns.name }} <span id="tab-count-{{ ns.id }}" class="text-text-muted font-normal"></span>
+  </a>
+  {% endfor %}
+</nav>
+
+{# Add key form + search bar #}
+<div class="flex gap-2 mb-4 items-center flex-wrap">
+  {% if ctx.org.role != 'translator' %}
+  <a href="/projects/{{ project.id }}/add-translations?namespace={{ activeNsId }}"
+     class="px-4 py-1.5 bg-primary hover:bg-primary-hover text-white rounded font-medium text-sm no-underline">Add Translations</a>
+  <a href="/projects/{{ project.id }}/import"
+     class="px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary border border-border rounded no-underline">{{ t("editor.import") }}</a>
+  <a href="/projects/{{ project.id }}/export"
+     class="px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary border border-border rounded no-underline">{{ t("editor.export") }}</a>
+  {% endif %}
+
+  <div id="editor-filters" class="ml-0 sm:ml-auto w-full sm:w-auto flex gap-2 items-center">
+    <input type="hidden" id="active-namespace" name="namespace" value="{{ activeNsId }}">
+    <label for="missing-filter" class="sr-only">Filter by missing translations</label>
+    <select name="missing" id="missing-filter"
+      hx-get="/projects/{{ project.id }}/editor/keys"
+      hx-trigger="change"
+      hx-target="#editor-content"
+      hx-swap="innerHTML"
+      hx-include="#editor-filters"
+      class="bg-surface border border-border rounded px-3 py-1.5 text-sm text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+      <option value="">{{ t("editor.all_keys") }}</option>
+      {% for lang in languages %}
+      <option value="{{ lang.language_code }}">{{ t("editor.missing_filter", { lang: lang.language_code }) }}</option>
+      {% endfor %}
+    </select>
+    <label for="editor-search" class="sr-only">Search keys and translations</label>
+    <input type="search" name="search" id="editor-search"
+      hx-get="/projects/{{ project.id }}/editor/keys"
+      hx-trigger="input changed delay:300ms, search"
+      hx-target="#editor-content"
+      hx-swap="innerHTML"
+      hx-include="#editor-filters"
+      placeholder="{{ t("editor.search_placeholder") }}"
+      class="bg-surface border border-border rounded px-3 py-1.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-primary w-full sm:w-72">
+  </div>
+</div>
+
+{% if importedCount %}
+<div class="mb-4 p-3 bg-green-900/20 border border-green-500/30 rounded-lg text-green-400 text-sm flex items-center justify-between"
+     id="import-success">
+  {{ t("editor.import_success", { count: importedCount }) }}
+</div>
+<script nonce="{{ nonce }}">autoDismiss(document.getElementById('import-success'));</script>
+{% endif %}
+
+{# Editor content loaded via HTMX #}
+<div id="editor-content"
+     aria-live="polite"
+     hx-get="/projects/{{ project.id }}/editor/keys?namespace={{ activeNsId }}&page={{ page }}{% if search %}&search={{ search | urlencode }}{% endif %}{% if missing %}&missing={{ missing | urlencode }}{% endif %}"
+     hx-trigger="load"
+     hx-swap="innerHTML">
+  <p class="text-text-muted text-sm" aria-busy="true">{{ t("editor.loading") }}</p>
+</div>
+
+{% endif %}
+
+{# Comment slide-out panel #}
+<div id="comment-panel" class="hidden fixed top-0 right-0 w-[360px] h-screen bg-surface-card border-l border-border z-40 flex flex-col shadow-xl" role="region" aria-label="Comments panel">
+  <div id="comment-panel-content" class="flex flex-col h-full">
+    <div class="flex items-center justify-center h-full text-text-muted text-sm">{{ t("editor.comment_panel_default") }}</div>
+  </div>
+</div>
+
+{# Keyboard shortcuts help modal #}
+{% call modal("shortcuts-modal", t("editor.shortcuts_title")) %}
+<table class="w-full text-sm">
+  <tbody class="divide-y divide-border">
+    <tr><td class="py-2 text-text-secondary">{{ t("editor.shortcut_edit") }}</td><td class="py-2 text-right"><kbd class="px-1.5 py-0.5 bg-surface border border-border rounded text-xs font-mono">Enter</kbd></td></tr>
+    <tr><td class="py-2 text-text-secondary">{{ t("editor.shortcut_save") }}</td><td class="py-2 text-right"><kbd class="px-1.5 py-0.5 bg-surface border border-border rounded text-xs font-mono">Ctrl+S</kbd></td></tr>
+    <tr><td class="py-2 text-text-secondary">{{ t("editor.shortcut_cancel") }}</td><td class="py-2 text-right"><kbd class="px-1.5 py-0.5 bg-surface border border-border rounded text-xs font-mono">Esc</kbd></td></tr>
+    <tr><td class="py-2 text-text-secondary">{{ t("editor.shortcut_help") }}</td><td class="py-2 text-right"><kbd class="px-1.5 py-0.5 bg-surface border border-border rounded text-xs font-mono">?</kbd></td></tr>
+  </tbody>
+</table>
+{% endcall %}
+{% endblock %}

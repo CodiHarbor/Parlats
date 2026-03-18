@@ -1,0 +1,21 @@
+{# HTMX partial: translation cell edit state #}
+<form hx-post="/projects/{{ project.id }}/keys/{{ keyId }}/translate?lang={{ lang }}"
+      hx-target="#cell-{{ keyId }}-{{ lang }}"
+      hx-swap="innerHTML"
+      class="m-0"
+      onclick="event.stopPropagation()"
+      onkeydown="if(event.key==='Escape'){event.preventDefault();document.querySelector('#cell-{{ keyId }}-{{ lang }} button[hx-get]')?.click()}else if(event.key==='Enter'&&!event.shiftKey&&!event.ctrlKey&&!event.metaKey&&!event.altKey){event.preventDefault();this.requestSubmit()}else if(event.key==='s'&&(event.ctrlKey||event.metaKey)){event.preventDefault();this.requestSubmit()}">
+  <textarea name="value" rows="2"
+    class="w-full bg-surface border border-primary rounded px-2 py-1 text-sm text-text-primary mb-1 focus:outline-none focus:ring-1 focus:ring-primary"
+    autofocus>{{ value }}</textarea>
+  <script nonce="{{ nonce }}">{ const ta = document.currentScript.previousElementSibling; ta.focus(); ta.selectionStart = ta.selectionEnd = ta.value.length; }</script>
+  <div class="flex gap-1">
+    <button type="submit"
+      class="px-2 py-0.5 bg-primary hover:bg-primary-hover text-white rounded text-xs font-medium cursor-pointer">{{ t("editor.cell_save") }}</button>
+    <button type="button"
+      class="px-2 py-0.5 bg-surface-card border border-border hover:bg-surface-hover text-text-primary rounded text-xs cursor-pointer"
+      hx-get="/projects/{{ project.id }}/keys/{{ keyId }}/cell?lang={{ lang }}"
+      hx-target="#cell-{{ keyId }}-{{ lang }}"
+      hx-swap="innerHTML">{{ t("editor.cell_cancel") }}</button>
+  </div>
+</form>

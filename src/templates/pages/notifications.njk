@@ -1,0 +1,86 @@
+{% extends "base.njk" %}
+{% from "macros/icons.njk" import icon %}
+
+{% block title %}Notifications — Parlats{% endblock %}
+
+{% block header %}
+{% if unreadCount > 0 %}
+<button class="px-3 py-1.5 text-sm text-primary hover:text-primary-hover bg-transparent border border-primary/30 rounded cursor-pointer"
+        hx-post="/notifications/read-all"
+        hx-target="#notification-bell"
+        hx-swap="innerHTML"
+        hx-on::after-request="clearUnreadStyles()">
+  {{ t("notifications.mark_all_read") }}
+</button>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+  <h1 class="text-2xl font-bold mb-1">{{ t("notifications.title") }}</h1>
+  <p class="text-text-muted text-sm">{{ t("notifications.subtitle") }}</p>
+</div>
+
+{# Type filter #}
+<div class="flex flex-wrap gap-2 mb-6">
+  {% set types = [
+    { value: "all", label: t("notifications.filter_all") },
+    { value: "comment_added", label: t("notifications.filter_comments") },
+    { value: "translation_overwritten", label: t("notifications.filter_overwrites") },
+    { value: "untranslated_threshold", label: t("notifications.filter_threshold") }
+  ] %}
+  {% for ft in types %}
+  <a href="/notifications{% if ft.value != 'all' %}?type={{ ft.value }}{% endif %}"
+     class="px-3 py-1.5 rounded text-sm no-underline
+            {% if currentType == ft.value %}bg-primary/15 text-primary font-semibold{% else %}text-text-secondary hover:bg-surface-hover{% endif %}">
+    {{ ft.label }}
+  </a>
+  {% endfor %}
+</div>
+
+{# Notification list #}
+<div id="notification-list" class="space-y-1">
+  {% if notifications.length > 0 %}
+  {% for n in notifications %}
+  <div class="flex items-start gap-3 px-4 py-3 rounded-lg {{ 'bg-primary/5' if not n.read_at else 'hover:bg-surface-hover' }}"
+       id="notification-{{ n.id }}">
+    <span class="w-5 text-center shrink-0 mt-0.5">
+      {% if n.type == 'comment_added' %}{{ icon("chat", "w-4 h-4") }}{% elif n.type == 'translation_overwritten' %}{{ icon("pencil", "w-4 h-4") }}{% else %}{{ icon("warning", "w-4 h-4") }}{% endif %}
+    </span>
+    <a href="{% if n.project_id %}/projects/{{ n.project_id }}{% if n.translation_key_id %}/editor{% endif %}{% else %}#{% endif %}"
+       class="min-w-0 flex-1 no-underline"
+       hx-post="/notifications/{{ n.id }}/read"
+       hx-swap="none">
+      <div class="text-sm {{ 'font-semibold text-text-primary' if not n.read_at else 'text-text-secondary' }}">{{ n.title }}</div>
+      <div class="text-sm text-text-muted mt-0.5">{{ n.body }}</div>
+      <div class="text-xs text-text-muted mt-1">{{ n.created_at | timeago }}</div>
+    </a>
+    <button class="text-text-muted hover:text-danger text-sm cursor-pointer bg-transparent border-0 shrink-0"
+            hx-post="/notifications/{{ n.id }}/dismiss"
+            hx-target="#notification-{{ n.id }}"
+            hx-swap="outerHTML"
+            title="{{ t("common.dismiss") }}" aria-label="{{ t("common.dismiss") }}">{{ icon("x", "w-4 h-4") }}</button>
+  </div>
+  {% endfor %}
+
+  {# Pagination #}
+  <div class="flex justify-between items-center pt-4">
+    {% if page > 1 %}
+    <a href="/notifications?page={{ page - 1 }}{% if currentType != 'all' %}&type={{ currentType }}{% endif %}"
+       class="text-sm text-primary no-underline">&larr; {{ t("common.previous") }}</a>
+    {% else %}
+    <span></span>
+    {% endif %}
+    {% if hasMore %}
+    <a href="/notifications?page={{ page + 1 }}{% if currentType != 'all' %}&type={{ currentType }}{% endif %}"
+       class="text-sm text-primary no-underline">{{ t("common.next") }} &rarr;</a>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="text-center py-12 text-text-muted">
+    <div class="mb-3 flex justify-center text-text-muted">{{ icon("bell", "w-10 h-10") }}</div>
+    <div class="text-sm">{% if currentType != 'all' %}{{ t("notifications.no_notifications_of_type") }}{% else %}{{ t("notifications.no_notifications") }}{% endif %}</div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

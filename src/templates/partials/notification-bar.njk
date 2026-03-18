@@ -1,0 +1,9 @@
+{# partials/notification-bar.njk #}
+{% if count > 0 %}
+<div class="mb-4 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-between">
+  <span class="text-sm text-primary">
+    {% if count == 1 %}{{ t("notifications.unread_count_one", { count: count }) }}{% else %}{{ t("notifications.unread_count", { count: count }) }}{% endif %}
+  </span>
+  <a href="/notifications" class="text-sm text-primary hover:text-primary-hover no-underline font-medium">{{ t("notifications.view") }} &rarr;</a>
+</div>
+{% endif %}

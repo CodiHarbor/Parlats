@@ -1,0 +1,96 @@
+{% extends "base.njk" %}
+
+{% block title %}Delete account — Parlats{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+  <h1 class="text-2xl font-bold mb-1">Delete account</h1>
+  <p class="text-text-muted text-sm">Permanently delete your account and all associated data.</p>
+</div>
+
+{% if error %}
+<div class="mb-4 px-4 py-3 rounded bg-danger/10 border border-danger/20 text-danger text-sm">
+  {{ error }}
+</div>
+{% endif %}
+
+<div class="max-w-lg space-y-6">
+  {# Data export #}
+  <div class="bg-surface-card border border-border rounded-lg p-5">
+    <h2 class="text-lg font-semibold mb-2">Export your data</h2>
+    <p class="text-text-secondary text-sm mb-3">Download a copy of all your personal data in JSON format before deleting your account.</p>
+    <a href="/user/export-data"
+       class="inline-block px-4 py-2 rounded bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-colors no-underline">
+      Download my data
+    </a>
+  </div>
+
+  {# Warning card #}
+  <div class="bg-danger/5 border border-danger/20 rounded-lg p-5">
+    <h2 class="text-lg font-semibold text-danger mb-3">This action is permanent</h2>
+    <p class="text-text-secondary text-sm mb-3">Deleting your account will immediately and permanently:</p>
+    <ul class="text-text-secondary text-sm space-y-1.5 list-disc pl-5 mb-3">
+      <li>Delete your profile, login credentials, and all sessions</li>
+      <li>Remove you from all organizations</li>
+      <li>Delete your comments and notifications</li>
+      <li>Anonymize your entries in audit history</li>
+      <li>Disassociate API keys you created</li>
+    </ul>
+    <p class="text-text-muted text-xs">Your translation data belongs to the organization and will not be deleted.</p>
+  </div>
+
+  {# Sole owner warning #}
+  {% if soleOwnerOrgs.length > 0 %}
+  <div class="bg-warning/5 border border-warning/20 rounded-lg p-5">
+    <h2 class="text-lg font-semibold text-warning mb-2">Ownership transfer required</h2>
+    <p class="text-text-secondary text-sm mb-3">
+      You are the sole owner of the following organization{{ "s" if soleOwnerOrgs.length > 1 }}. You must transfer ownership to another member before you can delete your account.
+    </p>
+    <ul class="text-text-secondary text-sm space-y-1 list-disc pl-5 mb-4">
+      {% for org in soleOwnerOrgs %}
+      <li><strong>{{ org.name }}</strong></li>
+      {% endfor %}
+    </ul>
+    <a href="/org/members"
+       class="inline-block px-4 py-2 rounded bg-warning/20 text-warning text-sm font-medium hover:bg-warning/30 transition-colors no-underline">
+      Go to Members &rarr;
+    </a>
+  </div>
+  {% endif %}
+
+  {# Deletion form #}
+  {% if soleOwnerOrgs.length == 0 %}
+  <form method="post" action="/user/delete-account" class="bg-surface-card border border-border rounded-lg p-6 space-y-5">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    {% if hasPassword %}
+    <div>
+      <label class="block text-sm font-medium text-text-secondary mb-1" for="password">
+        Confirm your password
+      </label>
+      <input type="password" id="password" name="password" required autocomplete="current-password"
+             class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none">
+    </div>
+    {% endif %}
+
+    <div>
+      <label class="block text-sm font-medium text-text-secondary mb-1" for="confirmation">
+        Type <strong class="text-danger">DELETE</strong> to confirm
+      </label>
+      <input type="text" id="confirmation" name="confirmation" required autocomplete="off" spellcheck="false"
+             placeholder="DELETE"
+             class="w-full bg-surface border border-border rounded px-3 py-2 text-sm text-text-primary focus:border-primary focus:outline-none">
+    </div>
+
+    <button type="submit"
+            class="w-full px-4 py-2.5 rounded bg-danger text-white text-sm font-medium hover:bg-red-600 transition-colors">
+      Permanently delete my account
+    </button>
+  </form>
+  {% endif %}
+
+  <div class="text-center">
+    <a href="/dashboard" class="text-sm text-text-secondary hover:text-text-primary no-underline">Cancel and go back</a>
+  </div>
+</div>
+{% endblock %}
