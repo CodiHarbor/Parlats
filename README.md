@@ -4,6 +4,8 @@ An open-core translation management platform for teams that build multi-language
 
 Translators get a fast, clean editing interface. Developers import/export files and use a CLI. Product managers see coverage at a glance. Everyone gets a full audit trail of what changed and when.
 
+![Parlats translation editor](public/editor-example.png)
+
 ## Key Features
 
 - **Import diff preview** — see exactly what will change before applying bulk imports, with per-cell accept/reject
@@ -42,15 +44,22 @@ Google OAuth is optional — email + password authentication works out of the bo
 
 ## CLI
 
-The `cli/` directory contains a standalone CLI tool for developer workflows:
+Install from npm:
 
 ```sh
-cd cli && bun install
-bun run src/index.ts init     # configure project connection
-bun run src/index.ts pull     # download translations
-bun run src/index.ts push     # upload translations with diff detection
-bun run src/index.ts status   # view translation progress
+npm install -g @parlats/cli
 ```
+
+Then in your project:
+
+```sh
+parlats init     # configure project connection
+parlats pull     # download translations
+parlats push     # upload translations with diff detection
+parlats status   # view translation progress
+```
+
+Supports presets for next-intl, i18next, react-intl, and vue-i18n. See the [cli/](cli/) directory for development setup.
 
 ## License
 
